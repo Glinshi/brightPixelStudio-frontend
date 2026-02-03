@@ -41,13 +41,13 @@ export default function Landing() {
             We blend design thinking with cutting-edge technology to create
             experiences that inspire, educate, and transform.
           </p>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-end sm:pr-135 sm:pt-5">
-            <Button to="/offers" variant="primary">
-              Explore Offers →
-            </Button>
-            <Button to="/workshops" variant="secondary">
-              View Workshops
-            </Button>
+            <div className="mt-8 flex flex-row gap-4 justify-end items-end sm:pr-8 md:pr-16 lg:pr-32 sm:pt-5">
+              <Button to="/offers" variant="primary" className="whitespace-nowrap">
+                Explore Offers →
+              </Button>
+              <Button to="/workshops" variant="secondary" className="whitespace-nowrap">
+                View Workshops
+              </Button>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import Button from '../components/Button'
-import DarkVeil from '../components/Darkveil'
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import Button from "../components/Button";
+import DarkVeil from "../components/Darkveil";
 
 export default function Landing() {
   return (
@@ -30,7 +30,7 @@ export default function Landing() {
         `}</style>
         <div className="relative z-10 text-center w-full">
           <div className="scale-in-animation">
-            <h1 className="text-5xl font-light text-[hsla(45,59%,52%,1)] md:text-6xl">
+            <h1 className="text-5xl font-light text-[rgba(45,59%,52%,1)] md:text-6xl">
               Where Creativity
             </h1>
             <h1 className="text-5xl font-light text-slate-700 md:text-6xl">
@@ -41,17 +41,25 @@ export default function Landing() {
             We blend design thinking with cutting-edge technology to create
             experiences that inspire, educate, and transform.
           </p>
-            <div className="mt-8 flex flex-row gap-4 justify-end items-end sm:pr-8 md:pr-16 lg:pr-32 sm:pt-5">
-              <Button to="/offers" variant="primary" className="whitespace-nowrap">
-                Explore Offers →
-              </Button>
-              <Button to="/workshops" variant="secondary" className="whitespace-nowrap">
-                View Workshops
-              </Button>
+          <div className="mt-8 flex flex-row gap-4 justify-end items-end sm:pr-8 md:pr-16 lg:pr-32 sm:pt-5">
+            <Button
+              to="/offers"
+              variant="primary"
+              className="whitespace-nowrap"
+            >
+              Explore Offers →
+            </Button>
+            <Button
+              to="/workshops"
+              variant="secondary"
+              className="whitespace-nowrap"
+            >
+              View Workshops
+            </Button>
           </div>
         </div>
       </div>
       <Footer />
     </div>
-  )
+  );
 }

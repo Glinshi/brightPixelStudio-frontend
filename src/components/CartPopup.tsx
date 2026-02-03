@@ -12,7 +12,7 @@ export default function CartPopup() {
       <div className="mt-4">
         <Link
           to="/cart"
-          className="block w-full rounded-lg bg-indigo-500 py-2 text-center text-white font-medium hover:bg-indigo-600 transition-colors"
+          className="block w-full rounded-lg bg-[rgba(152,122,31,0.49)] py-2 text-center text-white font-medium hover:bg-[rgba(152,122,31,0.55)] transition-colors"
         >
           Checkout
         </Link>

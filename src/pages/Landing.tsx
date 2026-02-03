@@ -30,10 +30,10 @@ export default function Landing() {
         `}</style>
         <div className="relative z-10 text-center w-full">
           <div className="scale-in-animation">
-            <h1 className="text-5xl font-light text--600 md:text-6xl">
+            <h1 className="text-5xl font-light text-[hsla(45,59%,52%,1)] md:text-6xl">
               Where Creativity
             </h1>
-            <h1 className="text-5xl font-light tesxt-slate-700 md:text-6xl">
+            <h1 className="text-5xl font-light text-slate-700 md:text-6xl">
               Meets Technology
             </h1>
           </div>
@@ -41,7 +41,7 @@ export default function Landing() {
             We blend design thinking with cutting-edge technology to create
             experiences that inspire, educate, and transform.
           </p>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-end sm:pr-135 sm:pt-5">
             <Button to="/offers" variant="primary">
               Explore Offers →
             </Button>

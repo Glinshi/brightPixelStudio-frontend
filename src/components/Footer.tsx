@@ -1,15 +1,14 @@
 import { Link } from 'react-router-dom'
 
 export default function Footer() {
-  return (
-    <footer className="border-t border-gray-200 bg-purple-50 px-6 py-12">
+  return (<footer className="border-t border-gray-200 bg-[rgba(152,122,31,0.49)] opacity-65 px-6 py-12">
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <h3 className="text-lg font-semibold text-gray-900">BrightPixel Studio</h3>
             <p className="mt-4 text-sm text-gray-600 leading-relaxed">
               We design and build digital products, services, and workshops for innovative team-building 
-              experiences that elevate both people and technology as they grow.
+              experiences that elevate both people and technology as they grow!
             </p>
           </div>
 

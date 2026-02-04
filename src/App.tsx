@@ -4,6 +4,8 @@ import Offers from './pages/Offers'
 import { AppProvider } from './context/AppContext'
 import OffersZoom from './pages/OffersZoom'
 import Cart from './pages/Cart'
+import Signin from './pages/Signin'
+import Signup from './pages/Signup'
 
 
 
@@ -18,6 +20,8 @@ function App() {
           <Route path="/offers" element={<Offers />} />
           <Route path="/offers-zoom" element={<OffersZoom />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </Router>
     </AppProvider>

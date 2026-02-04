@@ -18,6 +18,8 @@ export const allOffers = [
       "E-commerce solutions",
       "Custom solutions",
     ],
+    imageSrc: "/src/assets/images/shopping.png",
+    imageAlt: "Web Development",
   },
   {
     id: 2,
@@ -31,6 +33,8 @@ export const allOffers = [
       "Customer dashboard",
       "Order tracking",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 3,
@@ -44,6 +48,8 @@ export const allOffers = [
       "Color palette",
       "Typography selection",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 4,
@@ -57,6 +63,8 @@ export const allOffers = [
       "Content optimization",
       "Performance tracking",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 5,
@@ -70,6 +78,8 @@ export const allOffers = [
       "Community management",
       "Analytics reporting",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 6,
@@ -83,6 +93,8 @@ export const allOffers = [
       "Security setup",
       "Performance optimization",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 7,
@@ -96,6 +108,8 @@ export const allOffers = [
       "App store optimization",
       "Mobile UI/UX design",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 8,
@@ -109,6 +123,8 @@ export const allOffers = [
       "Design systems",
       "Usability testing",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 9,
@@ -122,6 +138,8 @@ export const allOffers = [
       "Content strategy",
       "Analytics & reporting",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 10,
@@ -135,6 +153,8 @@ export const allOffers = [
       "CDN configuration",
       "Monitoring setup",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 11,
@@ -148,6 +168,8 @@ export const allOffers = [
       "Authentication setup",
       "API documentation",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
   {
     id: 12,
@@ -161,6 +183,8 @@ export const allOffers = [
       "WordPress optimization",
       "Content management",
     ],
+    imageSrc: "",
+    imageAlt: "No image available",
   },
 ];
 
@@ -187,7 +211,7 @@ export default function Offers() {
           </p>
         </div>
         <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-1 gap-x-1 mb-16 ab mx-auto place-items-center">
             {currentOffers.map((offer) => (
               <OfferCard key={offer.id} offer={offer} />
             ))}

@@ -7,7 +7,7 @@ type AccountContentProps = {
 }
 
 export default function AccountContent({ activeSection }: AccountContentProps) {
-  const { enrolledWorkshops, unenrollFromWorkshop } = useApp()
+  const { enrolledWorkshops, unenrollFromWorkshop, orders } = useApp()
   const [currentOrderPage, setCurrentOrderPage] = useState(1)
   const [showUpdatedMessage, setShowUpdatedMessage] = useState(false)
   const itemsPerPage = 6
@@ -19,88 +19,9 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
     }, 2000)
   }
 
-  const allOrders = [
-    {
-      id: 6756,
-      status: 'pending',
-      total: '$1200',
-      items: [
-        { name: 'Web Development Service', quantity: 1 },
-        { name: 'UI/UX Design Package', quantity: 1 },
-        { name: 'SEO Optimization', quantity: 1 },
-      ],
-      createdAt: 'March 25, 2027 17:30',
-    },
-    {
-      id: 3456,
-      status: 'pending',
-      total: '$800',
-      items: [
-        { name: 'Mobile App Development', quantity: 1 },
-        { name: 'Digital Marketing Strategy', quantity: 1 },
-      ],
-      createdAt: 'March 25, 2027 17:30',
-    },
-    {
-      id: 3456,
-      status: 'pending',
-      total: '$600',
-      items: [
-        { name: 'E-commerce Solution', quantity: 1 },
-        { name: 'Website Maintenance', quantity: 6 },
-        { name: 'Logo Design', quantity: 1 },
-      ],
-      createdAt: 'March 25, 2027 17:30',
-    },
-    {
-      id: 7891,
-      status: 'completed',
-      total: '$1500',
-      items: [
-        { name: 'Custom Web Application', quantity: 1 },
-        { name: 'Database Design', quantity: 1 },
-        { name: 'API Development', quantity: 2 },
-      ],
-      createdAt: 'March 20, 2027 14:25',
-    },
-    {
-      id: 5432,
-      status: 'shipped',
-      total: '$900',
-      items: [
-        { name: 'Branding Package', quantity: 1 },
-        { name: 'Social Media Design', quantity: 5 },
-        { name: 'Business Card Design', quantity: 500 },
-      ],
-      createdAt: 'March 18, 2027 09:15',
-    },
-    {
-      id: 9876,
-      status: 'completed',
-      total: '$450',
-      items: [
-        { name: 'WordPress Theme', quantity: 1 },
-        { name: 'Plugin Development', quantity: 3 },
-        { name: 'Content Management', quantity: 1 },
-      ],
-      createdAt: 'March 15, 2027 16:40',
-    },
-    {
-      id: 1122,
-      status: 'shipped',
-      total: '$750',
-      items: [
-        { name: 'Digital Portfolio', quantity: 1 },
-        { name: 'Photo Editing Service', quantity: 20 },
-        { name: 'Website Hosting', quantity: 12 },
-      ],
-      createdAt: 'March 12, 2027 11:20',
-    },
-  ]
-
-  const totalOrderPages = Math.ceil(allOrders.length / itemsPerPage)
+  const totalOrderPages = Math.ceil(orders.length / itemsPerPage)
   const orderStartIndex = (currentOrderPage - 1) * itemsPerPage
-  const currentOrders = allOrders.slice(orderStartIndex, orderStartIndex + itemsPerPage)
+  const currentOrders = orders.slice(orderStartIndex, orderStartIndex + itemsPerPage)
 
   const renderProfile = () => (
     <div className="flex items-start justify-center h-full pt-16">Empty</div>
@@ -140,15 +61,15 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
                 <div className="mb-2">
                   <p className="font-medium text-gray-800 mb-1">Order: {order.id}</p>
                   <p className="text-gray-600 text-sm mb-1">Status: {order.status}</p>
-                  <p className="text-gray-600 text-sm mb-2">Total: {order.total}</p>
-                  <p className="text-xs text-gray-400">Created at: {order.createdAt}</p>
+                  <p className="text-gray-600 text-sm mb-2">Total: ${order.total.toFixed(2)}</p>
+                  <p className="text-xs text-gray-400">Created at: {order.date}</p>
                 </div>
               </div>
               <div className="flex-1 pl-6">
                 <div className="space-y-1">
                   {order.items.map((item, itemIndex) => (
                     <p key={itemIndex} className="text-gray-600 text-sm">
-                      {item.quantity}x {item.name}
+                      {item.quantity}x {item.title}
                     </p>
                   ))}
                 </div>

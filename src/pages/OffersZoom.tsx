@@ -25,9 +25,13 @@ export default function OffersZoom() {
 
   const addToCartHandler = () => {
     for (let i = 0; i < quantity; i++) {
-      addToCart(offer);
+      addToCart({
+        id: offer.id,
+        title: offer.title,
+        price: offer.price
+      });
     }
-    alert(`Added ${quantity} ${offer.title} offer(s) to cart!`);
+    alert(`Added ${quantity} ${offer.title} to cart!`);
   };
 
   return (

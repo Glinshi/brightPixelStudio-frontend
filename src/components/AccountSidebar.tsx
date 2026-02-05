@@ -10,7 +10,7 @@ interface AccountSidebarProps {
 
 export default function AccountSidebar({ activeSection, setActiveSection }: AccountSidebarProps) {
   function onLogout(event: React.MouseEvent<HTMLButtonElement>): void {
-    // Implement logout logic here
+
   }
 
   return (

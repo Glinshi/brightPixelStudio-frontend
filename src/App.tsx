@@ -6,6 +6,7 @@ import OffersZoom from './pages/OffersZoom'
 import Cart from './pages/Cart'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
+import Account from './pages/Account'
 
 
 
@@ -22,6 +23,8 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/Account" element={<Account />} />
+
         </Routes>
       </Router>
     </AppProvider>

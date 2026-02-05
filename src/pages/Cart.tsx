@@ -5,10 +5,16 @@ import Footer from '../components/Footer'
 import { useApp } from '../context/AppContext'
 
 export default function Cart() {
-  const { cartItems, updateCartQuantity, removeFromCart } = useApp()
+  const { cartItems, updateCartQuantity, removeFromCart, createOrder } = useApp()
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  const total = subtotal
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = subtotal;
+
+  const handleProceedToCheckout = () => {
+    const orderId = createOrder(cartItems, total);
+    localStorage.setItem('pendingOrderId', orderId.toString());
+    clearCart();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -28,7 +34,7 @@ export default function Cart() {
                   <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{item.title}</h3>
                   <p className="text-gray-500 text-sm">Service</p>
-                    <p className="font-semibold text-gray-900 mt-1">${item.price}</p>
+                    <p className="font-semibold text-gray-900 mt-1">${item.price.toFixed(2)}</p>
                   </div>
 
                   <div className="flex items-center">
@@ -57,7 +63,7 @@ export default function Cart() {
                   </button>
 
                   <div className="w-16 text-right">
-                    <span className="font-semibold text-gray-900">${item.price * item.quantity}</span>
+                    <span className="font-semibold text-gray-900">${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 </div>
               ))}
@@ -79,18 +85,21 @@ export default function Cart() {
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-semibold">${subtotal}</span>
+                <span className="font-semibold">${subtotal.toFixed(2)}</span>
               </div>
               <div className="border-t border-gray-200 pt-3">
                 <div className="flex justify-between">
                   <span className="text-lg font-semibold text-gray-900">Total</span>
-                  <span className="text-lg font-semibold text-gray-900">${total}</span>
+                  <span className="text-lg font-semibold text-gray-900">${total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
             <Link to="/pay">
-              <button className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.60)] hover:bg-[rgba(152,122,31,0.65)]">
+              <button
+                className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.60)] hover:bg-[rgba(152,122,31,0.65)]"
+                onClick={handleProceedToCheckout}
+              >
                 Proceed to checkout
               </button>
             </Link>
@@ -102,3 +111,11 @@ export default function Cart() {
     </div>
   )
 }
+
+function clearCart() {
+  throw new Error('Function not implemented.')
+}
+function clearpopup() {
+  throw new Error('Function not implemented.')
+}
+

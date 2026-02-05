@@ -2,10 +2,8 @@ import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import Button from './Button'
 
-type AccountSection = 'profile' | 'workshops' | 'orders' | 'settings'
-
-interface AccountContentProps {
-  activeSection: AccountSection
+type AccountContentProps = {
+  activeSection: 'profile' | 'workshops' | 'orders' | 'settings'
 }
 
 export default function AccountContent({ activeSection }: AccountContentProps) {

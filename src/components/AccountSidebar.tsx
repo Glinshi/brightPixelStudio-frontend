@@ -1,12 +1,18 @@
-type AccountSection = 'profile' | 'workshops' | 'orders' | 'settings'
+
+import React from 'react';
+
+type AccountSection = 'profile' | 'workshops' | 'orders' | 'settings';
 
 interface AccountSidebarProps {
-  activeSection: AccountSection
-  setActiveSection: (section: AccountSection) => void
-  onLogout?: () => void
+  activeSection: AccountSection;
+  setActiveSection: (section: AccountSection) => void;
 }
 
-export default function AccountSidebar({ activeSection, setActiveSection, onLogout }: AccountSidebarProps) {
+export default function AccountSidebar({ activeSection, setActiveSection }: AccountSidebarProps) {
+  function onLogout(event: React.MouseEvent<HTMLButtonElement>): void {
+    // Implement logout logic here
+  }
+
   return (
     <div className="w-48 bg-white flex flex-col border-r-2 border-gray-400">
       <div className="flex-1">
@@ -35,7 +41,6 @@ export default function AccountSidebar({ activeSection, setActiveSection, onLogo
           Settings
         </button>
       </div>
-      
       <div className="mt-auto rounded-bl-3xl bg-[rgba(255,26,26,0.2)]">
         <button onClick={onLogout}>
           <div className="w-full text-left px-6 py-5 text-lg font-black transition-all hover:opacity-90 text-[rgba(0,0,0,0.8)]">

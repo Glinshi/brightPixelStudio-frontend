@@ -16,8 +16,8 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <div className="flex min-h-[80vh] items-center justify-center px-6">
-        <div className="w-full max-w-4xl">
+      <div className="flex min-h-[40vh] items-center justify-center px-6">
+        <div className="max-w-4xl py-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
             {" "}
             <div className="relative  flex items-center justify-center overflow-hidden">

@@ -13,9 +13,9 @@ export default function Account() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        <h1 className="mb-8 text-3xl font-semibold text-gray-900">Account</h1>
-        <div className="flex rounded-3xl overflow-hidden bg-white shadow-sm border-2 border-gray-400 max-w-4xl mx-auto min-h-[900px]">
+      <div className="mx-auto max-w-7xl px-2 sm:px-4 py-6 sm:py-8">
+        <h1 className="mb-6 sm:mb-8 text-2xl sm:text-3xl font-semibold text-gray-900">Account</h1>
+        <div className="flex flex-col md:flex-row rounded-3xl overflow-hidden bg-white shadow-sm border-2 border-gray-400 max-w-full md:max-w-4xl mx-auto min-h-[600px] md:min-h-[900px]">
           <AccountSidebar
             activeSection={activeSection}
             setActiveSection={setActiveSection}

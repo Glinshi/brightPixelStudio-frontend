@@ -153,8 +153,8 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
   )
 
   return (
-    <div className="flex-1 bg-[rgba(152,122,31,0.49)]">
-      <div className="w-full h-full p-8">
+    <div className="flex-1 bg-[rgba(152,122,31,0.49)] min-w-0">
+      <div className="w-full h-full p-4 sm:p-6 md:p-8">
         {activeSection === 'profile' && renderProfile()}
         {activeSection === 'workshops' && renderWorkshops()}
         {activeSection === 'orders' && renderOrders()}

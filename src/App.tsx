@@ -9,6 +9,7 @@ import Signup from './pages/Signup'
 import Account from './pages/Account'
 import Workshops from './pages/Workshops'
 import WorkshopsZoom from './pages/WorkshopsZoom'
+import Pay from './pages/Pay'
 
 
 
@@ -26,9 +27,9 @@ function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/account" element={<Account />} />
-
           <Route path="/workshops" element={<Workshops />} />
           <Route path="/workshops-zoom" element={<WorkshopsZoom />} />
+          <Route path="/pay" element={<Pay />}/>
         </Routes>
       </Router>
     </AppProvider>

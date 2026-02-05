@@ -44,7 +44,6 @@ export default function WorkshopsZoom() {
           features={["Hands-on exercises", "Industry best practices", "Real-world projects", "Expert mentorship"]}
           imageSrc={workshop.imageSrc}
           imageAlt={workshop.imageAlt}
-          type="workshop"
           date={workshop.date}
           actionSection={
             <div className="flex items-center">

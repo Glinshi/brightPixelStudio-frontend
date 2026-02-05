@@ -12,7 +12,8 @@ export const allWorkshops = [
     date: "March 15, 2026 14:00",
     description:
       "Master Python basics, data structures, and algorithms. Perfect for beginners entering the programming world",
-     imageSrc: "/src/assets/images/shopping.png",
+    workshopId: "workshopcard1",
+    imageSrc: "/src/assets/images/shopping.png",
     imageAlt: "Web Development"
   },
   {

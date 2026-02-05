@@ -6,6 +6,7 @@ import OffersZoom from './pages/OffersZoom'
 import Cart from './pages/Cart'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
+import Account from './pages/Account'
 import Workshops from './pages/Workshops'
 import WorkshopsZoom from './pages/WorkshopsZoom'
 
@@ -24,6 +25,8 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/Account" element={<Account />} />
+
           <Route path="/workshops" element={<Workshops />} />
           <Route path="/workshops-zoom" element={<WorkshopsZoom />} />
         </Routes>

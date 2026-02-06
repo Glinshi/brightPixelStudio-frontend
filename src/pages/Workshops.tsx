@@ -1,103 +1,73 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import NavigationArrows from "../components/NavigationArrows";
 import WorkshopCard from "../components/WorkshopCard";
 
-export const allWorkshops = [
-  {
-    id: 1,
-    title: "Python Programming Fundamentals",
-    date: "March 15, 2026 14:00",
-    description:
-      "Master Python basics, data structures, and algorithms. Perfect for beginners entering the programming world",
-    workshopId: "workshopcard1",
-    imageSrc: "/src/assets/images/shopping.png",
-    imageAlt: "Web Development"
-  },
-  {
-    id: 2,
-    title: "Machine Learning with TensorFlow",
-    date: "March 22, 2026 10:00",
-    description:
-      "Build and train neural networks using TensorFlow. Learn deep learning concepts and practical AI applications",
-    workshopId: "workshopcard2",
-     imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 3,
-    title: "Full-Stack JavaScript Development",
-    date: "March 29, 2026 16:30",
-    description:
-      "Complete web development with Node.js, Express, React, and MongoDB. Build real-world applications",
-    workshopId: "workshopcard3",
-     imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 4,
-    title: "Cloud Computing with AWS",
-    date: "April 5, 2026 13:00",
-    description:
-      "Deploy scalable applications on Amazon Web Services. Learn EC2, S3, Lambda, and cloud architecture",
-    workshopId: "workshopcard4",
-     imageSrc: "",
-    imageAlt: "No image available",     
-  },
-  {
-    id: 5,
-    title: "Cybersecurity Essentials",
-    date: "April 12, 2026 15:30",
-    description:
-      "Protect systems and networks from cyber threats. Learn penetration testing, encryption, and security protocols",
-    workshopId: "workshopcard5",
-        imageSrc: "",       
-    imageAlt: "No image available",
-  },
-  {
-    id: 6,
-    title: "Data Science with Python",
-    date: "April 19, 2026 11:00",
-    description:
-      "Analyze big data using Pandas, NumPy, and Matplotlib. Extract insights from complex datasets",
-    workshopId: "workshopcard6",
-        imageSrc: "",       
-    imageAlt: "No image available",
-  },
-  {
-    id: 7,
-    title: "Mobile App Development (Flutter)",
-    date: "April 26, 2026 17:00",
-    description:
-      "Create cross-platform mobile apps with Flutter and Dart. Build for iOS and Android simultaneously",
-    workshopId: "workshopcard7",
-        imageSrc: "",       
-    imageAlt: "No image available",
-  },
-  {
-    id: 8,
-    title: "DevOps & Containerization",
-    date: "May 3, 2026 12:30",
-    description:
-      "Master Docker, Kubernetes, and CI/CD pipelines. Streamline development and deployment processes",
-    workshopId: "workshopcard8",
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-];
+export interface Workshop {
+  id: string;
+  title: string;
+  description: string | null;
+  starts_at: string | null;
+  capacity: number | null;
+  available_spots: number | null;
+  image_url: string | null;
+}
 
 export default function Workshops() {
+  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(allWorkshops.length / itemsPerPage);
+  useEffect(() => {
+    const fetchWorkshops = async () => {
+      try {
+        const response = await fetch("/api/workshops");
+        if (!response.ok) {
+          throw new Error("Failed to fetch workshops");
+        }
+        const data = await response.json();
+        setWorkshops(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWorkshops();
+  }, []);
+
+  const totalPages = Math.ceil(workshops.length / itemsPerPage);
   const startIndex = currentPage * itemsPerPage;
-  const currentWorkshops = allWorkshops.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
+  const currentWorkshops = workshops.slice(startIndex, startIndex + itemsPerPage);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="mx-auto max-w-4xl px-6 py-12">
+          <div className="flex items-center justify-center h-64">
+            <p className="text-gray-600">Loading workshops...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="mx-auto max-w-4xl px-6 py-12">
+          <div className="text-center text-red-500 py-8">{error}</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -115,18 +85,26 @@ export default function Workshops() {
           </p>
         </div>
 
-        <div className="relative">
-          <div className="space-y-4 mb-8">
-            {currentWorkshops.map((workshop) => (
-              <WorkshopCard key={workshop.id} workshop={workshop} />
-            ))}
+        {workshops.length === 0 ? (
+          <div className="text-center text-gray-500 py-8">
+            No workshops available at the moment
           </div>
-          <NavigationArrows
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-        </div>
+        ) : (
+          <div className="relative">
+            <div className="space-y-4 mb-8">
+              {currentWorkshops.map((workshop) => (
+                <WorkshopCard key={workshop.id} workshop={workshop} />
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <NavigationArrows
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       <Footer />

@@ -1,13 +1,16 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Button from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import shoppingPng from "../assets/images/shopping.png";
 import { useState } from "react";
 import { useApp } from "../context/AppContext";
 
 export default function Signin() {
-  const { login, user } = useApp();
+  const { login, user, checkout, cartItems } = useApp();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const redirectTo = searchParams.get("redirect");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -40,8 +43,24 @@ export default function Signin() {
     setLoading(true);
 
     try {
+      const itemsToSave = redirectTo === "checkout" ? [...cartItems] : [];
+      
       await login(formData.email, formData.password);
-      setIsSignedIn(true);
+      
+      if (redirectTo === "checkout") {
+        localStorage.setItem('pendingOrderItems', JSON.stringify(itemsToSave));
+        
+        const orderId = await checkout();
+        if (orderId) {
+          localStorage.setItem('pendingOrderId', orderId);
+          navigate('/pay');
+        } else {
+          localStorage.removeItem('pendingOrderItems');
+          setError("Failed to create order. Please try again.");
+        }
+      } else {
+        setIsSignedIn(true);
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
       
@@ -136,7 +155,7 @@ export default function Signin() {
                   </form>
                   <p className="mt-6 text-center text-sm text-gray-500">
                     Don't have an account?{" "}
-                    <Link to="/signup" className="text-blue-500 font-medium">
+                    <Link to={redirectTo ? `/signup?redirect=${redirectTo}` : "/signup"} className="text-blue-500 font-medium">
                       Sign Up
                     </Link>
                   </p>

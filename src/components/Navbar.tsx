@@ -30,10 +30,10 @@ export default function Navbar() {
             onMouseEnter={() => setShowCartPreview(true)}
             onMouseLeave={() => setShowCartPreview(false)}
           >
-            <Link to={user ? "/cart" : "/signin"} className="block p-2 text-gray-600 hover:text-gray-900">
+            <Link to="/cart" className="block p-2 text-gray-600 hover:text-gray-900">
               <ShoppingCart size={20} />
             </Link>
-            {showCartPreview && user && <CartPopup />}
+            {showCartPreview && <CartPopup />}
           </div>
           {user ? (
             <>

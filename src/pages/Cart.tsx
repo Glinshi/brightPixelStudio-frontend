@@ -1,22 +1,33 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import NotLoggedInPopup from '../components/NotLoggedInPopup'
 import { useApp } from '../context/AppContext'
 
 export default function Cart() {
-  const { cartItems, updateCartQuantity, removeFromCart, checkout } = useApp()
+  const { cartItems, updateCartQuantity, removeFromCart, checkout, user } = useApp()
   const navigate = useNavigate()
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const total = subtotal;
 
   const handleProceedToCheckout = async () => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    
+    localStorage.setItem('pendingOrderItems', JSON.stringify(cartItems));
+    
     const orderId = await checkout();
     if (orderId) {
       localStorage.setItem('pendingOrderId', orderId);
       navigate('/pay');
     } else {
+      localStorage.removeItem('pendingOrderItems');
       alert('Failed to create order');
     }
   };
@@ -112,6 +123,12 @@ export default function Cart() {
       </div>
 
       <Footer />
+
+      <NotLoggedInPopup 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+        redirectTo="checkout"
+      />
     </div>
   )
 }

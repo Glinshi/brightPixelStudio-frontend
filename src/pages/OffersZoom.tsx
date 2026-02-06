@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Minus, Plus, ChevronLeft } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -9,14 +9,13 @@ import type { Offer } from "./Offers";
 import Button from "../components/Button";
 
 export default function OffersZoom() {
-  const { addToCart, user } = useApp();
+  const { addToCart } = useApp();
   const [quantity, setQuantity] = useState(1);
   const [searchParams] = useSearchParams();
   const offerId = searchParams.get("offer") || "";
   const [offer, setOffer] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOffer = async () => {
@@ -48,11 +47,6 @@ export default function OffersZoom() {
 
   const addToCartHandler = async () => {
     if (!offer) return;
-    if (!user) {
-      alert('Please log in to add items to your cart');
-      navigate('/signin');
-      return;
-    }
     await addToCart(offer.id, offer.title, offer.price, quantity);
     alert(`Added ${quantity} ${offer.title} to cart!`);
   };

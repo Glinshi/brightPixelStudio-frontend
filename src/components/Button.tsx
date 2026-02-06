@@ -12,7 +12,7 @@ interface ButtonProps {
 }
 
 export default function Button({ children, to, variant = 'primary', onClick, className = '', disabled = false }: ButtonProps) {
-  const baseClasses = 'relative px-8 py-3 font-medium min-w-[150px] border-1 transition-colors overflow-hidden skew-x-[-12deg] rounded-[25px]';
+  const baseClasses = 'inline-block text-center relative px-8 py-3 font-medium min-w-[150px] border-1 transition-colors overflow-hidden skew-x-[-12deg] rounded-[25px]';
 
   const variantClasses = {
     primary: 'bg-[rgba(152,122,31,0.50)] text-white hover:bg-[rgba(152,122,31,0.55)]',

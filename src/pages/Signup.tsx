@@ -17,14 +17,6 @@ export default function Signup() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleImageError = (
-    e: React.SyntheticEvent<HTMLImageElement, Event>,
-  ) => {
-    e.currentTarget.style.display = "none";
-    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-    if (fallback) fallback.style.display = "flex";
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
     setError("");
@@ -63,7 +55,7 @@ export default function Signup() {
                 src={shoppingPng}
                 alt="Sign up illustration"
                 className="w-full h-full object-cover"
-                onError={handleImageError}
+                onError={(e) => e.currentTarget.style.display = "none"}
               />
             </div>
             <div className="p-8 lg:p-12">

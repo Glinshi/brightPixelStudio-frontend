@@ -2,10 +2,12 @@ import { ShoppingCart, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import CartPopup from './CartPopup'
+import { useApp } from '../context/AppContext'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [showCartPreview, setShowCartPreview] = useState(false)
+  const { user } = useApp()
 
   return (
     <nav className="border-b border-gray-200 bg-white">
@@ -43,7 +45,7 @@ export default function Navbar() {
             to="/signin" 
             className="hidden rounded-[25px] border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 md:block"
           >
-            Sign In
+            {user ? user.first_name || 'Account' : 'Sign In'}
           </Link>
 
           <button

@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+
+interface User {
+  id: string
+  email: string
+  first_name: string | null
+  last_name: string | null
+}
 
 interface Workshop {
   id: number
@@ -23,6 +30,11 @@ interface Order {
 }
 
 interface AppContextType {
+  // User
+  user: User | null
+  login: (email: string, password: string) => Promise<void>
+  logout: () => void
+  
   // Workshops
   enrolledWorkshops: Workshop[]
   enrollInWorkshop: (workshop: Workshop) => void
@@ -44,9 +56,61 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
   const [enrolledWorkshops, setEnrolledWorkshops] = useState<Workshop[]>([])
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [orders, setOrders] = useState<Order[]>([])
+
+  // Check if user is already logged in (via cookie)
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me', { credentials: 'include' })
+        if (response.ok) {
+          const userData = await response.json()
+          setUser(userData)
+        }
+      } catch {
+        // Not logged in, that's fine
+      }
+    }
+    checkAuth()
+  }, [])
+
+  // User functions
+  const login = async (email: string, password: string) => {
+    const formData = new URLSearchParams()
+    formData.append('username', email)
+    formData.append('password', password)
+
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData,
+      credentials: 'include',
+    })
+
+    if (!response.ok) {
+      const data = await response.json()
+      throw new Error(data.detail || 'Login failed')
+    }
+
+    // Fetch user info after login
+    const userResponse = await fetch('/api/auth/me', { credentials: 'include' })
+    if (userResponse.ok) {
+      const userData = await userResponse.json()
+      setUser(userData)
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+    } catch {
+      // Ignore errors
+    }
+    setUser(null)
+  }
 
   // Workshop functions
   const enrollInWorkshop = (workshop: Workshop) => {
@@ -116,6 +180,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider value={{
+      user,
+      login,
+      logout,
       enrolledWorkshops,
       enrollInWorkshop,
       unenrollFromWorkshop,

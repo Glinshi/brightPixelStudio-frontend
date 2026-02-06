@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import type { ReactNode } from 'react'
 
 interface User {
   id: string
@@ -15,18 +16,19 @@ interface Workshop {
 }
 
 interface CartItem {
-  id: number
+  id: string
+  product_id: string
   title: string
   price: number
   quantity: number
 }
 
 interface Order {
-  id: number
-  items: CartItem[]
-  total: number
-  status: 'pending' | 'paid'
-  date: string
+  id: string
+  total_amount: string
+  status: 'pending' | 'paid' | 'cancelled'
+  created_at: string
+  paid_at: string | null
 }
 
 interface AppContextType {
@@ -42,15 +44,19 @@ interface AppContextType {
   
   // Cart
   cartItems: CartItem[]
-  addToCart: (item: Omit<CartItem, 'quantity'>) => void
-  updateCartQuantity: (id: number, quantity: number) => void
-  removeFromCart: (id: number) => void
+  cartLoading: boolean
+  addToCart: (productId: string, title: string, price: number, quantity?: number) => Promise<void>
+  updateCartQuantity: (itemId: string, quantity: number) => Promise<void>
+  removeFromCart: (itemId: string) => Promise<void>
   clearCart: () => void
+  fetchCart: () => Promise<void>
   
   // Orders
   orders: Order[]
-  createOrder: (items: CartItem[], total: number) => number
-  updateOrderStatus: (orderId: number, status: 'pending' | 'paid') => void
+  ordersLoading: boolean
+  checkout: () => Promise<string | null>
+  payOrder: (orderId: string) => Promise<void>
+  fetchOrders: () => Promise<void>
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -59,7 +65,75 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [enrolledWorkshops, setEnrolledWorkshops] = useState<Workshop[]>([])
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [cartLoading, setCartLoading] = useState(false)
   const [orders, setOrders] = useState<Order[]>([])
+  const [ordersLoading, setOrdersLoading] = useState(false)
+
+  // Fetch cart from backend
+  const fetchCart = useCallback(async () => {
+    if (!user) {
+      // Don't clear cart when not logged in so keep local cart
+      return
+    }
+    setCartLoading(true)
+    try {
+      const response = await fetch('/api/carts/me', { credentials: 'include' })
+      if (response.ok) {
+        const cartData = await response.json()
+        // Fetch product details for each item
+        const itemsWithDetails = await Promise.all(
+          cartData.items.map(async (item: { id: string; product_id: string; quantity: number; unit_price_snapshot: number }) => {
+            try {
+              const productRes = await fetch(`/api/products/${item.product_id}`)
+              const product = productRes.ok ? await productRes.json() : null
+              return {
+                id: item.id,
+                product_id: item.product_id,
+                title: product?.title || 'Unknown Product',
+                price: item.unit_price_snapshot,
+                quantity: item.quantity
+              }
+            } catch {
+              return {
+                id: item.id,
+                product_id: item.product_id,
+                title: 'Unknown Product',
+                price: item.unit_price_snapshot,
+                quantity: item.quantity
+              }
+            }
+          })
+        )
+        setCartItems(itemsWithDetails)
+      } else if (response.status === 404) {
+        setCartItems([])
+      }
+    } catch {
+      // Failed to fetch cart
+    } finally {
+      setCartLoading(false)
+    }
+  }, [user])
+
+  // Fetch orders from backend
+  const fetchOrders = useCallback(async () => {
+    if (!user) {
+      // Don't clear orders when not logged in
+      return
+    }
+    setOrdersLoading(true)
+    try {
+      const response = await fetch('/api/orders', { credentials: 'include' })
+      if (response.ok) {
+        const ordersData = await response.json()
+        setOrders(ordersData)
+      }
+    } catch {
+      // Failed to fetch orders
+    } finally {
+      setOrdersLoading(false)
+    }
+  }, [user])
 
   // Check if user is already logged in (via cookie)
   useEffect(() => {
@@ -76,6 +150,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
     checkAuth()
   }, [])
+
+  // Fetch cart and orders when user logs in
+  useEffect(() => {
+    if (user) {
+      fetchCart()
+      fetchOrders()
+    }
+    // Don't clear cart/orders when not logged in - keep local state
+  }, [user, fetchCart, fetchOrders])
 
   // User functions
   const login = async (email: string, password: string) => {
@@ -110,6 +193,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Ignore errors
     }
     setUser(null)
+    setCartItems([])
+    setOrders([])
   }
 
   // Workshop functions
@@ -125,57 +210,93 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   // Cart functions
-  const addToCart = (item: Omit<CartItem, 'quantity'>) => {
-    setCartItems(prev => {
-      const existing = prev.find(i => i.id === item.id)
-      if (existing) {
-        return prev.map(i => 
-          i.id === item.id 
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
-        )
+  const addToCart = async (productId: string, title: string, price: number, quantity: number = 1) => {
+    if (!user) return
+
+    try {
+      const response = await fetch('/api/cart-items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: productId, quantity }),
+        credentials: 'include',
+      })
+      if (response.ok) {
+        await fetchCart()
       }
-      return [...prev, { ...item, quantity: 1 }]
-    })
+    } catch {
+    }
   }
 
-  const updateCartQuantity = (id: number, quantity: number) => {
+  const updateCartQuantity = async (itemId: string, quantity: number) => {
     if (quantity < 1) return
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      )
-    )
+    if (!user) return
+
+    try {
+      const response = await fetch(`/api/cart-items/${itemId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity }),
+        credentials: 'include',
+      })
+      if (response.ok) {
+        await fetchCart()
+      }
+    } catch {
+    }
   }
 
-  const removeFromCart = (id: number) => {
-    setCartItems(prev => prev.filter(item => item.id !== id))
+  const removeFromCart = async (itemId: string) => {
+    if (!user) return
+
+    try {
+      const response = await fetch(`/api/cart-items/${itemId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+      if (response.ok) {
+        await fetchCart()
+      }
+    } catch {
+    }
   }
 
   const clearCart = () => {
     setCartItems([])
   }
 
-  // Order functions
-  const createOrder = (items: CartItem[], total: number): number => {
-    const orderId = Date.now()
-    const newOrder: Order = {
-      id: orderId,
-      items: [...items],
-      total,
-      status: 'pending',
-      date: new Date().toISOString().split('T')[0]
+  const checkout = async (): Promise<string | null> => {
+    if (!user) return null
+    
+    try {
+      const response = await fetch('/api/orders/checkout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+      if (response.ok) {
+        const order = await response.json()
+        await fetchCart()
+        await fetchOrders()
+        return order.id
+      }
+    } catch {
     }
-    setOrders(prev => [...prev, newOrder])
-    return orderId
+    return null
   }
 
-  const updateOrderStatus = (orderId: number, status: 'pending' | 'paid') => {
-    setOrders(prev => 
-      prev.map(order => 
-        order.id === orderId ? { ...order, status } : order
-      )
-    )
+  const payOrder = async (orderId: string) => {
+    if (!user) return
+    
+    try {
+      const response = await fetch(`/api/orders/${orderId}/pay`, {
+        method: 'PATCH',
+        credentials: 'include',
+      })
+      if (response.ok) {
+        await fetchOrders()
+      }
+    } catch {
+      // Failed to pay order
+    }
   }
 
   return (
@@ -187,13 +308,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       enrollInWorkshop,
       unenrollFromWorkshop,
       cartItems,
+      cartLoading,
       addToCart,
       updateCartQuantity,
       removeFromCart,
       clearCart,
+      fetchCart,
       orders,
-      createOrder,
-      updateOrderStatus
+      ordersLoading,
+      checkout,
+      payOrder,
+      fetchOrders,
     }}>
       {children}
     </AppContext.Provider>

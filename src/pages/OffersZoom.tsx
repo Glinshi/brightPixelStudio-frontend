@@ -1,21 +1,44 @@
-import { useState, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Minus, Plus, ChevronLeft } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ZoomCard from "../components/ZoomCard";
 import { useApp } from "../context/AppContext";
-import { allOffers } from "./Offers";
+import type { Offer } from "./Offers";
 import Button from "../components/Button";
 
 export default function OffersZoom() {
-  const { addToCart } = useApp();
+  const { addToCart, user } = useApp();
   const [quantity, setQuantity] = useState(1);
   const [searchParams] = useSearchParams();
-  const offerId = parseInt(searchParams.get("offer") || "1");
+  const offerId = searchParams.get("offer") || "";
+  const [offer, setOffer] = useState<Offer | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const offer = useMemo(() => {
-    return allOffers.find((o) => o.id === offerId) || allOffers[0];
+  useEffect(() => {
+    const fetchOffer = async () => {
+      if (!offerId) {
+        setError("No offer ID provided");
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await fetch(`/api/products/${offerId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch offer");
+        }
+        const data = await response.json();
+        setOffer(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOffer();
   }, [offerId]);
 
   const updateQuantity = (newQuantity: number) => {
@@ -23,16 +46,55 @@ export default function OffersZoom() {
     setQuantity(newQuantity);
   };
 
-  const addToCartHandler = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart({
-        id: offer.id,
-        title: offer.title,
-        price: offer.price
-      });
+  const addToCartHandler = async () => {
+    if (!offer) return;
+    if (!user) {
+      alert('Please log in to add items to your cart');
+      navigate('/signin');
+      return;
     }
+    await addToCart(offer.id, offer.title, offer.price, quantity);
     alert(`Added ${quantity} ${offer.title} to cart!`);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <div className="flex items-center justify-center h-64">
+            <p className="text-gray-600">Loading offer...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !offer) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <div className="mb-6">
+            <Link
+              to="/offers"
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
+              <button className="w-12 h-12 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                <ChevronLeft size={20} className="text-gray-600" />
+              </button>
+              <span className="text-gray-600 font-medium">Return to offers</span>
+            </Link>
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-red-600">Error: {error || "Offer not found"}</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,8 +118,8 @@ export default function OffersZoom() {
           description={offer.description}
           features={offer.features}
           price={offer.price}
-          imageSrc={offer.imageSrc}
-          imageAlt={offer.imageAlt}
+          imageSrc={offer.image_url}
+          imageAlt={offer.title}
           actionSection={
             <div className="flex items-center gap-6">
               <div className="flex items-center">

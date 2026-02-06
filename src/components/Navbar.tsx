@@ -30,23 +30,31 @@ export default function Navbar() {
             onMouseEnter={() => setShowCartPreview(true)}
             onMouseLeave={() => setShowCartPreview(false)}
           >
-            <Link to="/cart" className="block p-2 text-gray-600 hover:text-gray-900">
+            <Link to={user ? "/cart" : "/signin"} className="block p-2 text-gray-600 hover:text-gray-900">
               <ShoppingCart size={20} />
             </Link>
-            {showCartPreview && <CartPopup />}
+            {showCartPreview && user && <CartPopup />}
           </div>
-          <Link 
-            to="/account" 
-            className="hidden rounded-[25px] border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 md:block"
-          >
-            Account
-          </Link>
-          <Link 
-            to={user ? "/account" : "/signin"}
-            className="hidden rounded-[25px] border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 md:block"
-          >
-            {user ? user.first_name || 'Account' : 'Sign In'}
-          </Link>
+          {user ? (
+            <>
+              <Link 
+                to="/account"
+                className="hidden rounded-[25px] border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 md:block"
+              >
+                Account
+              </Link>
+              <span className="hidden text-sm text-gray-600 md:block">
+                {user.first_name || user.email}
+              </span>
+            </>
+          ) : (
+            <Link 
+              to="/signin"
+              className="hidden rounded-[25px] border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 md:block"
+            >
+              Sign In
+            </Link>
+          )}
 
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -66,9 +74,15 @@ export default function Navbar() {
             <Link to="/workshops" className="text-gray-600 hover:text-gray-900">
               Workshops
             </Link>
-            <Link to="/account" className="text-gray-600 hover:text-gray-900">
-              Account
-            </Link>
+            {user ? (
+              <Link to="/account" className="text-gray-600 hover:text-gray-900">
+                Account
+              </Link>
+            ) : (
+              <Link to="/signin" className="text-gray-600 hover:text-gray-900">
+                Sign In
+              </Link>
+            )}
           </div>
         </div>
       )}

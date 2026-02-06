@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Presentation } from 'lucide-react'
 
 interface WorkshopCardProps {
   workshop: {
@@ -27,7 +28,7 @@ export default function WorkshopCard({ workshop }: WorkshopCardProps) {
     <div className="bg-white rounded-xl p-6 border border-gray-300 shadow-sm">
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0 mb-4">
-          <span className="text-gray-500 font-bold text-xl">×</span>
+          <Presentation size={24} className="text-[rgba(152,122,31,0.7)]" />
         </div>
         
         <div className="flex-1">

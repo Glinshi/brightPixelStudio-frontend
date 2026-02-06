@@ -21,13 +21,40 @@ export default function Signin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    
+    if (!formData.email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setError("Please enter a valid email address (e.g. name@example.com)");
+      return;
+    }
+    if (!formData.password) {
+      setError("Please enter your password");
+      return;
+    }
+
     setLoading(true);
 
     try {
       await login(formData.email, formData.password);
       setIsSignedIn(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Signin went wrong");
+      const message = err instanceof Error ? err.message : "";
+      
+
+      if (message.includes("Incorrect email or password")) {
+        setError("Incorrect email or password");
+      } else if (message.includes("Internal server error")) {
+        setError("Something went wrong. Please try again later");
+      } else if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        setError("Unable to connect to the server");
+      } else {
+        setError("Sign in failed. Please check your credentials");
+      }
     } finally {
       setLoading(false);
     }
@@ -97,7 +124,7 @@ export default function Signin() {
                       />
                     </div>
 
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
                     <Button
                       variant="primary"

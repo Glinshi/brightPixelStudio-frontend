@@ -20,6 +20,41 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!formData.first_name.trim()) {
+      setError("Please enter your first name");
+      return;
+    }
+    if (formData.first_name.trim().length > 10) {
+      setError("First name cannot exceed 10 characters");
+      return;
+    }
+    if (!formData.last_name.trim()) {
+      setError("Please enter your last name");
+      return;
+    }
+    if (formData.last_name.trim().length > 40) {
+      setError("Last name cannot exceed 40 characters");
+      return;
+    }
+    if (!formData.email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setError("Please enter a valid email address (e.g. name@example.com)");
+      return;
+    }
+    if (!formData.password) {
+      setError("Please enter a password");
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -36,7 +71,17 @@ export default function Signup() {
 
       navigate("/signin");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "";
+      
+      if (message.includes("already exists") || message.includes("already registered")) {
+        setError("An account with this email already exists");
+      } else if (message.includes("Internal server error")) {
+        setError("Something went wrong. Please try again later");
+      } else if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        setError("Unable to connect to the server");
+      } else {
+        setError(message || "Sign up failed. Please try again");
+      }
     } finally {
       setLoading(false);
     }
@@ -110,7 +155,7 @@ export default function Signup() {
                   />
                 </div>
 
-                {error && <p className="text-red-500 text-sm">{error}</p>}
+                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
                 <Button
                   variant="primary"

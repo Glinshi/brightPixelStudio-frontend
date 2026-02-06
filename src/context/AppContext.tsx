@@ -37,6 +37,7 @@ interface Order {
 interface AppContextType {
   // User
   user: User | null
+  setUser: (user: User | null) => void
   login: (email: string, password: string) => Promise<void>
   logout: () => void
   
@@ -361,6 +362,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       user,
+      setUser,
       login,
       logout,
       enrolledWorkshops,

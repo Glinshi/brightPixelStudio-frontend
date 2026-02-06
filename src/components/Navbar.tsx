@@ -42,7 +42,7 @@ export default function Navbar() {
             Account
           </Link>
           <Link 
-            to="/signin" 
+            to={user ? "/account" : "/signin"}
             className="hidden rounded-[25px] border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 md:block"
           >
             {user ? user.first_name || 'Account' : 'Sign In'}

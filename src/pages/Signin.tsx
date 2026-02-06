@@ -8,7 +8,7 @@ import { useApp } from "../context/AppContext";
 
 export default function Signin() {
   const { login, user } = useApp();
-  
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,7 +19,7 @@ export default function Signin() {
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setError("");
     setLoading(true);
 
@@ -27,7 +27,7 @@ export default function Signin() {
       await login(formData.email, formData.password);
       setIsSignedIn(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "Signin went wrong");
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ export default function Signin() {
                 src={shoppingPng}
                 alt="Sign in illustration"
                 className="w-full h-full object-cover"
-                onError={(e) => e.currentTarget.style.display = "none"}
+                onError={(e) => (e.currentTarget.style.display = "none")}
               />
             </div>
             <div className="p-8 lg:p-12">
@@ -55,9 +55,14 @@ export default function Signin() {
                     You are signed in
                   </h2>
                   <p className="text-gray-600">
-                    Welcome back{user?.first_name ? `, ${user.first_name}` : ''}!
+                    Welcome back{user?.first_name ? `, ${user.first_name}` : ""}
+                    !
                   </p>
-                  <Button variant="primary" to="/" className="w-full py-3 text-lg">
+                  <Button
+                    variant="primary"
+                    to="/"
+                    className="w-full py-3 text-lg"
+                  >
                     Go to Homepage
                   </Button>
                 </div>
@@ -72,7 +77,9 @@ export default function Signin() {
                       <input
                         type="email"
                         value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
                         className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         placeholder="Email"
                       />
@@ -82,7 +89,9 @@ export default function Signin() {
                       <input
                         type="password"
                         value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, password: e.target.value })
+                        }
                         className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         placeholder="Password"
                       />
@@ -90,16 +99,17 @@ export default function Signin() {
 
                     {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                    <Button variant="primary" className="w-full py-3 text-lg" disabled={loading}>
+                    <Button
+                      variant="primary"
+                      className="w-full py-3 text-lg"
+                      disabled={loading}
+                    >
                       {loading ? "Loading..." : "Sign In"}
                     </Button>
                   </form>
                   <p className="mt-6 text-center text-sm text-gray-500">
                     Don't have an account?{" "}
-                    <Link
-                      to="/signup"
-                      className="text-blue-500 font-medium"
-                    >
+                    <Link to="/signup" className="text-blue-500 font-medium">
                       Sign Up
                     </Link>
                   </p>

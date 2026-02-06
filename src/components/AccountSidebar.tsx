@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
 
 type AccountSection = 'profile' | 'workshops' | 'orders' | 'settings';
 
@@ -9,7 +11,13 @@ interface AccountSidebarProps {
 }
 
 export default function AccountSidebar({ activeSection, setActiveSection }: AccountSidebarProps) {
-  function onLogout(event: React.MouseEvent<HTMLButtonElement>): void {}
+  const { logout } = useApp();
+  const navigate = useNavigate();
+
+  async function onLogout() {
+    await logout();
+    navigate('/signin');
+  }
 
   return (
     <div className="w-full md:w-48 bg-white flex flex-row md:flex-col border-b-2 md:border-b-0 md:border-r-2 border-gray-400">

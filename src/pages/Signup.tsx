@@ -7,7 +7,7 @@ import shoppingPng from "../assets/images/shopping.png";
 
 export default function Signup() {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -18,7 +18,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setError("");
     setLoading(true);
 
@@ -34,7 +34,6 @@ export default function Signup() {
         throw new Error(data.detail || "Signup failed");
       }
 
-     
       navigate("/signin");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -55,7 +54,7 @@ export default function Signup() {
                 src={shoppingPng}
                 alt="Sign up illustration"
                 className="w-full h-full object-cover"
-                onError={(e) => e.currentTarget.style.display = "none"}
+                onError={(e) => (e.currentTarget.style.display = "none")}
               />
             </div>
             <div className="p-8 lg:p-12">
@@ -67,7 +66,9 @@ export default function Signup() {
                   <input
                     type="text"
                     value={formData.first_name}
-                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, first_name: e.target.value })
+                    }
                     className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Firstname"
                   />
@@ -77,7 +78,9 @@ export default function Signup() {
                   <input
                     type="text"
                     value={formData.last_name}
-                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, last_name: e.target.value })
+                    }
                     className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Lastname"
                   />
@@ -87,7 +90,9 @@ export default function Signup() {
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Email"
                   />
@@ -97,7 +102,9 @@ export default function Signup() {
                   <input
                     type="password"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Password"
                   />
@@ -105,7 +112,11 @@ export default function Signup() {
 
                 {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                <Button variant="primary" className="w-full py-3 text-lg mt-6" disabled={loading}>
+                <Button
+                  variant="primary"
+                  className="w-full py-3 text-lg mt-6"
+                  disabled={loading}
+                >
                   {loading ? "Loading..." : "Sign Up"}
                 </Button>
               </form>

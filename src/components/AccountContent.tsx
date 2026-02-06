@@ -6,10 +6,23 @@ type AccountContentProps = {
   activeSection: 'profile' | 'workshops' | 'orders' | 'settings'
 }
 
+function formatDate(dateString: string | null): string {
+  if (!dateString) return 'Date TBD'
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
 export default function AccountContent({ activeSection }: AccountContentProps) {
-  const { enrolledWorkshops, unenrollFromWorkshop, orders } = useApp()
+  const { enrolledWorkshops, unenrollFromWorkshop, orders, workshopsLoading } = useApp()
   const [currentOrderPage, setCurrentOrderPage] = useState(1)
   const [showUpdatedMessage, setShowUpdatedMessage] = useState(false)
+  const [unenrollingId, setUnenrollingId] = useState<string | null>(null)
   const itemsPerPage = 6
 
   const handleUpdate = () => {
@@ -17,6 +30,15 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
     setTimeout(() => {
       setShowUpdatedMessage(false)
     }, 2000)
+  }
+
+  const handleUnenroll = async (workshopId: string) => {
+    setUnenrollingId(workshopId)
+    try {
+      await unenrollFromWorkshop(workshopId)
+    } finally {
+      setUnenrollingId(null)
+    }
   }
 
   const totalOrderPages = Math.ceil(orders.length / itemsPerPage)
@@ -29,25 +51,32 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
 
   const renderWorkshops = () => (
     <div className="p-6">
-      <div className="space-y-4 mb-6">
-        {enrolledWorkshops.map((workshop) => (
-          <div key={workshop.id} className="bg-white rounded-lg border border-gray-400 p-4">
-            <div className="flex justify-between items-center mb-2">
-              <div>
-                <h3 className="font-medium text-gray-800 mb-1">{workshop.title}</h3>
-                <p className="text-gray-600 mb-1">{workshop.date}</p>
-                <p className="text-gray-600 text-sm">{workshop.description}</p>
+      {workshopsLoading ? (
+        <div className="text-center text-white py-8">Loading workshops...</div>
+      ) : enrolledWorkshops.length === 0 ? (
+        <div className="text-center text-white py-8">No enrolled workshops</div>
+      ) : (
+        <div className="space-y-4 mb-6">
+          {enrolledWorkshops.map((workshop) => (
+            <div key={workshop.id} className="bg-white rounded-lg border border-gray-400 p-4">
+              <div className="flex justify-between items-center mb-2">
+                <div>
+                  <h3 className="font-medium text-gray-800 mb-1">{workshop.title}</h3>
+                  <p className="text-gray-600 mb-1">{formatDate(workshop.starts_at)}</p>
+                  <p className="text-gray-600 text-sm">{workshop.description}</p>
+                </div>
+                <button
+                  onClick={() => handleUnenroll(workshop.id)}
+                  disabled={unenrollingId === workshop.id}
+                  className="rounded-[25px] px-3 py-1 text-white text-xs font-medium transition-colors hover:opacity-90 whitespace-nowrap bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.55)] disabled:opacity-50"
+                >
+                  {unenrollingId === workshop.id ? 'Unenrolling...' : '-Unenroll'}
+                </button>
               </div>
-              <button
-                onClick={() => unenrollFromWorkshop(workshop.id)}
-                className="rounded-[25px] px-3 py-1 text-white text-xs font-medium transition-colors hover:opacity-90 whitespace-nowrap bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.55)]"
-              >
-                -Unenroll
-              </button>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 

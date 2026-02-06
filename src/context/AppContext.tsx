@@ -9,10 +9,13 @@ interface User {
 }
 
 interface Workshop {
-  id: number
+  id: string
   title: string
-  date: string
-  description: string
+  description: string | null
+  starts_at: string | null
+  capacity: number | null
+  available_spots: number | null
+  image_url: string | null
 }
 
 interface CartItem {
@@ -39,8 +42,10 @@ interface AppContextType {
   
   // Workshops
   enrolledWorkshops: Workshop[]
-  enrollInWorkshop: (workshop: Workshop) => void
-  unenrollFromWorkshop: (workshopId: number) => void
+  workshopsLoading: boolean
+  enrollInWorkshop: (workshopId: string) => Promise<void>
+  unenrollFromWorkshop: (workshopId: string) => Promise<void>
+  fetchEnrolledWorkshops: () => Promise<void>
   
   // Cart
   cartItems: CartItem[]
@@ -64,6 +69,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined)
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [enrolledWorkshops, setEnrolledWorkshops] = useState<Workshop[]>([])
+  const [workshopsLoading, setWorkshopsLoading] = useState(false)
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [cartLoading, setCartLoading] = useState(false)
   const [orders, setOrders] = useState<Order[]>([])
@@ -135,6 +141,39 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [user])
 
+  // Fetch enrolled workshops from backend
+  const fetchEnrolledWorkshops = useCallback(async () => {
+    if (!user) return
+    setWorkshopsLoading(true)
+    try {
+      const response = await fetch('/api/workshop-registrations/user/my-registrations', { 
+        credentials: 'include' 
+      })
+      if (response.ok) {
+        const registrations = await response.json()
+        // Fetch workshop details for each registration
+        const workshopsWithDetails = await Promise.all(
+          registrations.map(async (reg: { workshop_id: string }) => {
+            try {
+              const workshopRes = await fetch(`/api/workshops/${reg.workshop_id}`)
+              if (workshopRes.ok) {
+                return await workshopRes.json()
+              }
+              return null
+            } catch {
+              return null
+            }
+          })
+        )
+        setEnrolledWorkshops(workshopsWithDetails.filter(Boolean))
+      }
+    } catch {
+      // Failed to fetch enrollments
+    } finally {
+      setWorkshopsLoading(false)
+    }
+  }, [user])
+
   // Check if user is already logged in (via cookie)
   useEffect(() => {
     const checkAuth = async () => {
@@ -151,14 +190,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     checkAuth()
   }, [])
 
-  // Fetch cart and orders when user logs in
+  // Fetch cart, orders, and enrolled workshops when user logs in
   useEffect(() => {
     if (user) {
       fetchCart()
       fetchOrders()
+      fetchEnrolledWorkshops()
     }
-    // Don't clear cart/orders when not logged in - keep local state
-  }, [user, fetchCart, fetchOrders])
+  }, [user, fetchCart, fetchOrders, fetchEnrolledWorkshops])
 
   // User functions
   const login = async (email: string, password: string) => {
@@ -195,18 +234,38 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUser(null)
     setCartItems([])
     setOrders([])
+    setEnrolledWorkshops([])
   }
 
   // Workshop functions
-  const enrollInWorkshop = (workshop: Workshop) => {
-    setEnrolledWorkshops(prev => {
-      if (prev.find(w => w.id === workshop.id)) return prev
-      return [...prev, workshop]
-    })
+  const enrollInWorkshop = async (workshopId: string) => {
+    if (!user) return
+    try {
+      const response = await fetch(`/api/workshop-registrations/${workshopId}/register`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+      if (response.ok) {
+        await fetchEnrolledWorkshops()
+      }
+    } catch {
+      // Failed to enroll
+    }
   }
 
-  const unenrollFromWorkshop = (workshopId: number) => {
-    setEnrolledWorkshops(prev => prev.filter(w => w.id !== workshopId))
+  const unenrollFromWorkshop = async (workshopId: string) => {
+    if (!user) return
+    try {
+      const response = await fetch(`/api/workshop-registrations/${workshopId}/cancel`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+      if (response.ok) {
+        await fetchEnrolledWorkshops()
+      }
+    } catch {
+      // Failed to unenroll
+    }
   }
 
   // Cart functions
@@ -305,8 +364,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       enrolledWorkshops,
+      workshopsLoading,
       enrollInWorkshop,
       unenrollFromWorkshop,
+      fetchEnrolledWorkshops,
       cartItems,
       cartLoading,
       addToCart,

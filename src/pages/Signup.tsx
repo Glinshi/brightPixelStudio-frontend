@@ -2,11 +2,13 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Button from "../components/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import shoppingPng from "../assets/images/shopping.png";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -69,7 +71,7 @@ export default function Signup() {
         throw new Error(data.detail || "Signup failed");
       }
 
-      navigate("/signin");
+      navigate(redirectTo ? `/signin?redirect=${redirectTo}` : "/signin");
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
       
@@ -168,7 +170,7 @@ export default function Signup() {
 
               <p className="mt-6 text-center text-sm text-gray-500">
                 Already have an account?{" "}
-                <Link to="/signin" className="text-blue-500 font-medium">
+                <Link to={redirectTo ? `/signin?redirect=${redirectTo}` : "/signin"} className="text-blue-500 font-medium">
                   Sign In
                 </Link>
               </p>

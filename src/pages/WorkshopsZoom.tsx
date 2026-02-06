@@ -83,7 +83,6 @@ export default function WorkshopsZoom() {
       } else {
         await enrollInWorkshop(workshop.id)
       }
-      // Refresh workshop to update available_spots
       await refreshWorkshop()
     } finally {
       setEnrolling(false)

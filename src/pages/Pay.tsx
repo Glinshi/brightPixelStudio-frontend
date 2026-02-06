@@ -6,6 +6,14 @@ import Footer from "../components/Footer";
 import Button from "../components/Button";
 import { useApp } from "../context/AppContext";
 
+interface OrderItem {
+  id: string;
+  product_id: string;
+  title: string;
+  price: number;
+  quantity: number;
+}
+
 export default function Pay() {
   const { payOrder, orders, fetchOrders } = useApp();
   const navigate = useNavigate();
@@ -13,15 +21,26 @@ export default function Pay() {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
   const pendingOrder = orders.find(o => o.id === currentOrderId);
   const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace('€', '')) : 0;
 
   React.useEffect(() => {
     const pendingOrderId = localStorage.getItem('pendingOrderId');
+    const pendingOrderItems = localStorage.getItem('pendingOrderItems');
+    
     if (pendingOrderId) {
       setCurrentOrderId(pendingOrderId);
       fetchOrders();
+    }
+    
+    if (pendingOrderItems) {
+      try {
+        setOrderItems(JSON.parse(pendingOrderItems));
+      } catch {
+        setOrderItems([]);
+      }
     }
   }, [fetchOrders]);
 
@@ -32,6 +51,7 @@ export default function Pay() {
         await payOrder(currentOrderId);
         setPaymentSuccess(true);
         localStorage.removeItem('pendingOrderId');
+        localStorage.removeItem('pendingOrderItems');
         setIsProcessing(false);
       }, 1000);
     }
@@ -162,6 +182,18 @@ export default function Pay() {
               Order Summary
             </h2>
             <div className="space-y-4 mb-6">
+              {orderItems.length > 0 ? (
+                <>
+                  {orderItems.map((item) => (
+                    <div key={item.id} className="flex justify-between items-center py-2">
+                      <p className="font-medium text-gray-900">{item.quantity}x {item.title}</p>
+                      <span className="font-medium text-gray-900">€{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p className="text-gray-500">Loading order items...</p>
+              )}
               <div className="border-t border-gray-200 pt-4">
                 <div className="flex justify-between">
                   <span className="text-lg font-semibold text-gray-900">

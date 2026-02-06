@@ -7,30 +7,32 @@ import Button from "../components/Button";
 import { useApp } from "../context/AppContext";
 
 export default function Pay() {
-  const { updateOrderStatus, clearCart, cartItems } = useApp();
+  const { payOrder, orders, fetchOrders } = useApp();
   const navigate = useNavigate();
   const [selectedPayment, setSelectedPayment] = useState("credit-card");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [currentOrderId, setCurrentOrderId] = useState<number | null>(null);
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
+
+  const pendingOrder = orders.find(o => o.id === currentOrderId);
+  const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace('€', '')) : 0;
 
   React.useEffect(() => {
     const pendingOrderId = localStorage.getItem('pendingOrderId');
     if (pendingOrderId) {
-      setCurrentOrderId(Number(pendingOrderId));
+      setCurrentOrderId(pendingOrderId);
+      fetchOrders();
     }
-  }, []);
+  }, [fetchOrders]);
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (currentOrderId) {
-      setTimeout(() => {
-        updateOrderStatus(currentOrderId, "paid");
-        clearCart();
+      setIsProcessing(true);
+      setTimeout(async () => {
+        await payOrder(currentOrderId);
         setPaymentSuccess(true);
         localStorage.removeItem('pendingOrderId');
+        setIsProcessing(false);
       }, 1000);
     }
   };
@@ -147,9 +149,10 @@ export default function Pay() {
               <div className="mt-6">
                 <Button
                   onClick={handlePayment}
-                  className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.7)]"
+                  disabled={isProcessing || !currentOrderId}
+                  className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.7)] disabled:opacity-50"
                 >
-                  Pay ${total.toFixed(2)} securely
+                  {isProcessing ? 'Processing...' : `Pay €${total.toFixed(2)} securely`}
                 </Button>
               </div>
             </div>
@@ -159,23 +162,13 @@ export default function Pay() {
               Order Summary
             </h2>
             <div className="space-y-4 mb-6">
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex justify-between">
-                  <span className="text-gray-600">
-                    {item.quantity}x {item.title}
-                  </span>
-                  <span className="font-semibold">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
-                </div>
-              ))}
               <div className="border-t border-gray-200 pt-4">
                 <div className="flex justify-between">
                   <span className="text-lg font-semibold text-gray-900">
                     Total
                   </span>
                   <span className="text-lg font-semibold text-gray-900">
-                    ${total.toFixed(2)}
+                    €{total.toFixed(2)}
                   </span>
                 </div>
               </div>

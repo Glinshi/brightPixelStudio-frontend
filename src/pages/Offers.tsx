@@ -1,200 +1,76 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import NavigationArrows from "../components/NavigationArrows";
 import OfferCard from "../components/OfferCard";
 
-export const allOffers = [
-  {
-    id: 1,
-    title: "Web Development",
-    price: 1249.99,
-    description:
-      "Modern performant web applications built with the latest technologies and best practices for your business success.",
-    features: [
-      "Responsive design",
-      "Progressive web apps",
-      "E-commerce solutions",
-      "Custom solutions",
-    ],
-    imageSrc: "/src/assets/images/shopping.png",
-    imageAlt: "Web Development",
-  },
-  {
-    id: 2,
-    title: "E-Commerce Platform",
-    price: 2199.95,
-    description:
-      "Complete online store solutions with payment integration, inventory management, and customer analytics.",
-    features: [
-      "Payment gateway setup",
-      "Inventory management",
-      "Customer dashboard",
-      "Order tracking",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 3,
-    title: "Brand Identity Design",
-    price: 949.5,
-    description:
-      "Comprehensive brand identity packages including logo design, color schemes, and brand guidelines.",
-    features: [
-      "Logo design",
-      "Brand guidelines",
-      "Color palette",
-      "Typography selection",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 4,
-    title: "SEO Optimization",
-    price: 749.99,
-    description:
-      "Boost your online visibility with comprehensive SEO strategies and technical optimization services.",
-    features: [
-      "Keyword research",
-      "Technical SEO",
-      "Content optimization",
-      "Performance tracking",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 5,
-    title: "Social Media Management",
-    price: 499.95,
-    description:
-      "Professional social media management to grow your online presence and engage with your audience.",
-    features: [
-      "Content creation",
-      "Post scheduling",
-      "Community management",
-      "Analytics reporting",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 6,
-    title: "Database Development",
-    price: 1799.99,
-    description:
-      "Custom database solutions and data management systems designed for scalability and security.",
-    features: [
-      "Database design",
-      "Data migration",
-      "Security setup",
-      "Performance optimization",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 7,
-    title: "Mobile App Development",
-    price: 2499.0,
-    description:
-      "Native and cross-platform mobile applications that deliver exceptional user experiences across all devices.",
-    features: [
-      "iOS & Android apps",
-      "React Native solutions",
-      "App store optimization",
-      "Mobile UI/UX design",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 8,
-    title: "UI/UX Design",
-    price: 799.5,
-    description:
-      "Beautiful, intuitive user interfaces and experiences that convert visitors into customers and drive engagement.",
-    features: [
-      "User research",
-      "Wireframing & prototyping",
-      "Design systems",
-      "Usability testing",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 9,
-    title: "Digital Marketing",
-    price: 599.99,
-    description:
-      "Strategic digital marketing campaigns that grow your online presence and drive qualified traffic to your business.",
-    features: [
-      "SEO optimization",
-      "Social media marketing",
-      "Content strategy",
-      "Analytics & reporting",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 10,
-    title: "Cloud Hosting Setup",
-    price: 399.95,
-    description:
-      "Professional cloud hosting solutions with SSL certificates, CDN setup, and 24/7 monitoring.",
-    features: [
-      "Cloud deployment",
-      "SSL certificates",
-      "CDN configuration",
-      "Monitoring setup",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 11,
-    title: "API Development",
-    price: 1499.99,
-    description:
-      "Custom REST and GraphQL APIs for seamless data integration and third-party service connections.",
-    features: [
-      "REST API design",
-      "GraphQL implementation",
-      "Authentication setup",
-      "API documentation",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-  {
-    id: 12,
-    title: "WordPress Development",
-    price: 899.5,
-    description:
-      "Custom WordPress websites and plugins tailored to your specific business needs and requirements.",
-    features: [
-      "Custom themes",
-      "Plugin development",
-      "WordPress optimization",
-      "Content management",
-    ],
-    imageSrc: "",
-    imageAlt: "No image available",
-  },
-];
+export interface Offer {
+  id: string;
+  title: string;
+  price: number;
+  description: string;
+  features?: string[];
+  image_url?: string | null;
+  product_type: "product" | "service";
+  is_active: boolean;
+}
 
 export default function Offers() {
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 6;
 
-  const totalPages = Math.ceil(allOffers.length / itemsPerPage);
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        const response = await fetch("/api/products");
+        if (!response.ok) {
+          throw new Error("Failed to fetch offers");
+        }
+        const data = await response.json();
+        setOffers(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOffers();
+  }, []);
+
+  const totalPages = Math.ceil(offers.length / itemsPerPage);
   const startIndex = currentPage * itemsPerPage;
-  const currentOffers = allOffers.slice(startIndex, startIndex + itemsPerPage);
+  const currentOffers = offers.slice(startIndex, startIndex + itemsPerPage);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="flex items-center justify-center h-64">
+            <p className="text-gray-600">Loading offers...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="flex items-center justify-center h-64">
+            <p className="text-red-600">Error: {error}</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -211,7 +87,7 @@ export default function Offers() {
           </p>
         </div>
         <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-1 gap-x-1 mb-16 ab mx-auto place-items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-2 mb-16 w-fit mx-auto">
             {currentOffers.map((offer) => (
               <OfferCard key={offer.id} offer={offer} />
             ))}

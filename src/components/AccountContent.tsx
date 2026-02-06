@@ -53,31 +53,33 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
 
   const renderOrders = () => (
     <div className="p-6">
-      <div className="space-y-4 mb-6">
-        {currentOrders.map((order, index) => (
-          <div key={`${order.id}-${index}`} className="bg-white rounded-lg border border-gray-400 p-4">
-            <div className="flex justify-between">
-              <div className="flex-1">
-                <div className="mb-2">
-                  <p className="font-medium text-gray-800 mb-1">Order: {order.id}</p>
-                  <p className="text-gray-600 text-sm mb-1">Status: {order.status}</p>
-                  <p className="text-gray-600 text-sm mb-2">Total: ${order.total.toFixed(2)}</p>
-                  <p className="text-xs text-gray-400">Created at: {order.date}</p>
-                </div>
-              </div>
-              <div className="flex-1 pl-6">
-                <div className="space-y-1">
-                  {order.items.map((item, itemIndex) => (
-                    <p key={itemIndex} className="text-gray-600 text-sm">
-                      {item.quantity}x {item.title}
+      {orders.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          No orders yet
+        </div>
+      ) : (
+        <div className="space-y-4 mb-6">
+          {currentOrders.map((order, index) => (
+            <div key={`${order.id}-${index}`} className="bg-white rounded-lg border border-gray-400 p-4">
+              <div className="flex justify-between">
+                <div className="flex-1">
+                  <div className="mb-2">
+                    <p className="font-medium text-gray-800 mb-1">Order: {order.id.slice(0, 8)}...</p>
+                    <p className="text-gray-600 text-sm mb-1">
+                      Status: <span className={order.status === 'paid' ? 'text-green-600' : 'text-orange-500'}>{order.status}</span>
                     </p>
-                  ))}
+                    <p className="text-gray-600 text-sm mb-2">Total: {order.total_amount}</p>
+                    <p className="text-xs text-gray-400">Created at: {new Date(order.created_at).toLocaleDateString()}</p>
+                    {order.paid_at && (
+                      <p className="text-xs text-gray-400">Paid at: {new Date(order.paid_at).toLocaleDateString()}</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {totalOrderPages > 1 && (
         <div className="flex justify-center items-center gap-4">

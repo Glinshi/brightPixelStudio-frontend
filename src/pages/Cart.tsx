@@ -1,19 +1,24 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useApp } from '../context/AppContext'
 
 export default function Cart() {
-  const { cartItems, updateCartQuantity, removeFromCart, createOrder } = useApp()
+  const { cartItems, updateCartQuantity, removeFromCart, checkout } = useApp()
+  const navigate = useNavigate()
 
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const total = subtotal;
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const total = subtotal;
 
-  const handleProceedToCheckout = () => {
-    const orderId = createOrder(cartItems, total);
-    localStorage.setItem('pendingOrderId', orderId.toString());
-    clearCart();
+  const handleProceedToCheckout = async () => {
+    const orderId = await checkout();
+    if (orderId) {
+      localStorage.setItem('pendingOrderId', orderId);
+      navigate('/pay');
+    } else {
+      alert('Failed to create order');
+    }
   };
 
   return (
@@ -95,14 +100,13 @@ export default function Cart() {
               </div>
             </div>
 
-            <Link to="/pay">
-              <button
-                className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.60)] hover:bg-[rgba(152,122,31,0.65)]"
-                onClick={handleProceedToCheckout}
-              >
-                Proceed to checkout
-              </button>
-            </Link>
+            <button
+              className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.60)] hover:bg-[rgba(152,122,31,0.65)] disabled:opacity-50"
+              onClick={handleProceedToCheckout}
+              disabled={cartItems.length === 0}
+            >
+              Proceed to checkout
+            </button>
           </div>
         </div>
       </div>
@@ -111,11 +115,3 @@ export default function Cart() {
     </div>
   )
 }
-
-function clearCart() {
-  throw new Error('Function not implemented.')
-}
-function clearpopup() {
-  throw new Error('Function not implemented.')
-}
-

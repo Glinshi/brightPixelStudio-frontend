@@ -20,6 +20,32 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!formData.first_name.trim()) {
+      setError("Please enter your first name");
+      return;
+    }
+    if (!formData.last_name.trim()) {
+      setError("Please enter your last name");
+      return;
+    }
+    if (!formData.email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+    if (!formData.email.includes("@")) {
+      setError("Invalid email address");
+      return;
+    }
+    if (!formData.password) {
+      setError("Please enter a password");
+      return;
+    }
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -36,7 +62,17 @@ export default function Signup() {
 
       navigate("/signin");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "";
+      
+      if (message.includes("already exists") || message.includes("already registered")) {
+        setError("An account with this email already exists");
+      } else if (message.includes("Internal server error")) {
+        setError("Something went wrong. Please try again later");
+      } else if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        setError("Unable to connect to the server");
+      } else {
+        setError(message || "Sign up failed. Please try again");
+      }
     } finally {
       setLoading(false);
     }
@@ -110,7 +146,11 @@ export default function Signup() {
                   />
                 </div>
 
-                {error && <p className="text-red-500 text-sm">{error}</p>}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-red-600 text-sm text-center">{error}</p>
+                  </div>
+                )}
 
                 <Button
                   variant="primary"

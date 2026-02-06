@@ -21,13 +21,39 @@ export default function Signin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    
+    if (!formData.email.trim()) {
+      setError("Please enter your email");
+      return;
+    }
+    if (!formData.email.includes("@")) {
+      setError("Invalid email address");
+      return;
+    }
+    if (!formData.password) {
+      setError("Please enter your password");
+      return;
+    }
+
     setLoading(true);
 
     try {
       await login(formData.email, formData.password);
       setIsSignedIn(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Signin went wrong");
+      const message = err instanceof Error ? err.message : "";
+      
+
+      if (message.includes("Incorrect email or password")) {
+        setError("Incorrect email or password");
+      } else if (message.includes("Internal server error")) {
+        setError("Something went wrong. Please try again later");
+      } else if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        setError("Unable to connect to the server");
+      } else {
+        setError("Sign in failed. Please check your credentials");
+      }
     } finally {
       setLoading(false);
     }
@@ -97,7 +123,11 @@ export default function Signin() {
                       />
                     </div>
 
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <p className="text-red-600 text-sm text-center">{error}</p>
+                      </div>
+                    )}
 
                     <Button
                       variant="primary"

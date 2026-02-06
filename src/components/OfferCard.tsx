@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Package, Wrench } from 'lucide-react'
 
 interface OfferCardProps {
   offer: {
@@ -7,19 +8,25 @@ interface OfferCardProps {
     price: number
     description: string
     features?: string[]
+    product_type?: 'product' | 'service'
   }
 }
 
 export default function OfferCard({ offer }: OfferCardProps) {
+  const Icon = offer.product_type === 'service' ? Wrench : Package
+  
   return (
     <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-80 w-80">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Link 
-          to={`/offers-zoom?offer=${offer.id}`}
-          className="block hover:opacity-80 transition-opacity"
-        >
-          <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2" title={offer.title}>{offer.title}</h3>
-        </Link>
+        <div className="flex items-start gap-3 mb-3">
+          <Icon size={20} className="text-[rgba(152,122,31,0.7)] flex-shrink-0 mt-1" />
+          <Link 
+            to={`/offers-zoom?offer=${offer.id}`}
+            className="block hover:opacity-80 transition-opacity"
+          >
+            <h3 className="text-xl font-semibold text-gray-900 line-clamp-2" title={offer.title}>{offer.title}</h3>
+          </Link>
+        </div>
         <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3" title={offer.description}>{offer.description}</p>
         {offer.features && offer.features.length > 0 && (
           <ul className="space-y-2 mb-4 overflow-hidden flex-1">

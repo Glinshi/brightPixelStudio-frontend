@@ -19,17 +19,120 @@ function formatDate(dateString: string | null): string {
 }
 
 export default function AccountContent({ activeSection }: AccountContentProps) {
-  const { enrolledWorkshops, unenrollFromWorkshop, orders, workshopsLoading } = useApp()
+  const { enrolledWorkshops, unenrollFromWorkshop, orders, workshopsLoading, user, setUser } = useApp()
   const [currentOrderPage, setCurrentOrderPage] = useState(1)
   const [showUpdatedMessage, setShowUpdatedMessage] = useState(false)
+  const [updateError, setUpdateError] = useState<string | null>(null)
+  const [updating, setUpdating] = useState(false)
   const [unenrollingId, setUnenrollingId] = useState<string | null>(null)
   const itemsPerPage = 6
 
-  const handleUpdate = () => {
-    setShowUpdatedMessage(true)
-    setTimeout(() => {
-      setShowUpdatedMessage(false)
-    }, 2000)
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [updatedFields, setUpdatedFields] = useState<string[]>([])
+
+  const handleUpdate = async () => {
+    setUpdateError(null)
+    setUpdating(true)
+
+    const updateData: Record<string, string> = {}
+    const fieldNames: string[] = []
+
+   
+    if (firstName.trim()) {
+      if (firstName.trim().length < 2) {
+        setUpdateError('First name must be at least 2 characters')
+        setUpdating(false)
+        return
+      }
+      if (firstName.trim().length > 10) {
+        setUpdateError('First name cannot exceed 10 characters')
+        setUpdating(false)
+        return
+      }
+      updateData.first_name = firstName.trim()
+      fieldNames.push('First Name')
+    }
+
+   
+    if (lastName.trim()) {
+      if (lastName.trim().length < 2) {
+        setUpdateError('Last name must be at least 2 characters')
+        setUpdating(false)
+        return
+      }
+      if (lastName.trim().length > 40) {
+        setUpdateError('Last name cannot exceed 40 characters')
+        setUpdating(false)
+        return
+      }
+      updateData.last_name = lastName.trim()
+      fieldNames.push('Last Name')
+    }
+
+    if (email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(email.trim())) {
+        setUpdateError('Please enter a valid email address (e.g. name@example.com)')
+        setUpdating(false)
+        return
+      }
+      updateData.email = email.trim()
+      fieldNames.push('Email')
+    }
+
+ 
+    if (password.trim()) {
+      if (password.length < 8) {
+        setUpdateError('Password must be at least 8 characters')
+        setUpdating(false)
+        return
+      }
+      updateData.password = password.trim()
+      fieldNames.push('Password')
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      setUpdateError('Please fill in at least one field')
+      setUpdating(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/users/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
+        credentials: 'include',
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.detail || 'Update failed')
+      }
+
+      const updatedUser = await response.json()
+      setUser(updatedUser)
+
+      setFirstName('')
+      setLastName('')
+      setEmail('')
+      setPassword('')
+
+      setUpdatedFields(fieldNames)
+      setShowUpdatedMessage(true)
+      setTimeout(() => {
+        setShowUpdatedMessage(false)
+        setUpdatedFields([])
+      }, 3000)
+    } catch (err) {
+      setUpdateError(err instanceof Error ? err.message : 'Update failed')
+    } finally {
+      setUpdating(false)
+    }
   }
 
   const handleUnenroll = async (workshopId: string) => {
@@ -148,35 +251,54 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
     <div className="flex items-start justify-center h-full pt-16">
       <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 w-80">
         <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">Update account</h2>
+        {user && (
+          <p className="text-center text-gray-500 text-sm mb-4">
+            Logged in as: {user.first_name} {user.last_name}
+          </p>
+        )}
         <div className="space-y-4">
           <input
             type="text"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-500 text-sm"
-            placeholder="FirstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-700 text-sm"
+            placeholder="First Name"
           />
           <input
             type="text"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-500 text-sm"
-            placeholder="LastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-700 text-sm"
+            placeholder="Last Name"
           />
           <input
             type="email"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-500 text-sm"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-700 text-sm"
             placeholder="Email"
           />
           <input
             type="password"
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-500 text-sm"
-            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-4 py-3 bg-white text-gray-700 text-sm"
+            placeholder="New Password"
           />
           <Button
             onClick={handleUpdate}
-            className="w-full mt-4 rounded-lg px-4 py-3 text-white font-medium bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.55)]"
+            disabled={updating}
+            className="w-full mt-4 rounded-lg px-4 py-3 text-white font-medium bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.55)] disabled:opacity-50"
           >
-            Update
+            {updating ? 'Updating...' : 'Update'}
           </Button>
-          {showUpdatedMessage && (
-            <p className="text-center text-green-600 font-medium mt-2">Updated!</p>
+          {showUpdatedMessage && updatedFields.length > 0 && (
+            <p className="text-center text-green-600 font-medium mt-2">
+              Updated: {updatedFields.join(', ')}
+            </p>
+          )}
+          {updateError && (
+            <p className="text-center text-red-500 font-medium mt-2">{updateError}</p>
           )}
         </div>
       </div>

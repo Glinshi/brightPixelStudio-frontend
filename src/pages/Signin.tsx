@@ -27,8 +27,9 @@ export default function Signin() {
       setError("Please enter your email");
       return;
     }
-    if (!formData.email.includes("@")) {
-      setError("Invalid email address");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setError("Please enter a valid email address (e.g. name@example.com)");
       return;
     }
     if (!formData.password) {

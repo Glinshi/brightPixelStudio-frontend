@@ -25,24 +25,33 @@ export default function Signup() {
       setError("Please enter your first name");
       return;
     }
+    if (formData.first_name.trim().length > 10) {
+      setError("First name cannot exceed 10 characters");
+      return;
+    }
     if (!formData.last_name.trim()) {
       setError("Please enter your last name");
+      return;
+    }
+    if (formData.last_name.trim().length > 40) {
+      setError("Last name cannot exceed 40 characters");
       return;
     }
     if (!formData.email.trim()) {
       setError("Please enter your email");
       return;
     }
-    if (!formData.email.includes("@")) {
-      setError("Invalid email address");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setError("Please enter a valid email address (e.g. name@example.com)");
       return;
     }
     if (!formData.password) {
       setError("Please enter a password");
       return;
     }
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
 

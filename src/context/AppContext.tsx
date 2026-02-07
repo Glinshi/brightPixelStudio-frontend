@@ -26,12 +26,21 @@ interface CartItem {
   quantity: number
 }
 
+interface OrderItem {
+  id: string
+  product_id: string
+  quantity: number
+  unit_price: number
+  product_title: string
+}
+
 interface Order {
   id: string
   total_amount: string
   status: 'pending' | 'paid' | 'cancelled'
   created_at: string
   paid_at: string | null
+  items: OrderItem[]
 }
 
 interface AppContextType {
@@ -427,7 +436,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       })
       if (response.ok) {
         const order = await response.json()
-        await fetchCart()
+        clearLocalCart()
+        setCartItems([])
         await fetchOrders()
         return order.id
       } else {

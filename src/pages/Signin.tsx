@@ -45,7 +45,7 @@ export default function Signin() {
     try {
       const itemsToSave = redirectTo === "checkout" ? [...cartItems] : [];
       
-      await login(formData.email, formData.password);
+      await login(formData.email.trim(), formData.password);
       
       if (redirectTo === "checkout") {
         localStorage.setItem('pendingOrderItems', JSON.stringify(itemsToSave));

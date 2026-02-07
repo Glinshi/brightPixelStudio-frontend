@@ -24,7 +24,7 @@ export default function Pay() {
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
   const pendingOrder = orders.find(o => o.id === currentOrderId);
-  const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace('€', '')) : 0;
+  const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace('$', '')) : 0;
 
   React.useEffect(() => {
     const pendingOrderId = localStorage.getItem('pendingOrderId');
@@ -172,7 +172,7 @@ export default function Pay() {
                   disabled={isProcessing || !currentOrderId}
                   className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.7)] disabled:opacity-50"
                 >
-                  {isProcessing ? 'Processing...' : `Pay €${total.toFixed(2)} securely`}
+                  {isProcessing ? 'Processing...' : `Pay $${total.toFixed(2)} securely`}
                 </Button>
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function Pay() {
                   {orderItems.map((item) => (
                     <div key={item.id} className="flex justify-between items-center py-2">
                       <p className="font-medium text-gray-900">{item.quantity}x {item.title}</p>
-                      <span className="font-medium text-gray-900">€{(item.price * item.quantity).toFixed(2)}</span>
+                      <span className="font-medium text-gray-900">${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </>
@@ -200,7 +200,7 @@ export default function Pay() {
                     Total
                   </span>
                   <span className="text-lg font-semibold text-gray-900">
-                    €{total.toFixed(2)}
+                    ${total.toFixed(2)}
                   </span>
                 </div>
               </div>

@@ -5,6 +5,12 @@ import Button from "../components/Button";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import shoppingPng from "../assets/images/shopping.png";
 
+const capitalizeFirstLetter = (str: string) => {
+  const trimmed = str.trim();
+  if (!trimmed) return trimmed;
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+};
+
 export default function Signup() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -60,10 +66,17 @@ export default function Signup() {
     setLoading(true);
 
     try {
+      const submitData = {
+        first_name: capitalizeFirstLetter(formData.first_name),
+        last_name: capitalizeFirstLetter(formData.last_name),
+        email: formData.email.trim(),
+        password: formData.password,
+      };
+
       const response = await fetch("/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       if (!response.ok) {

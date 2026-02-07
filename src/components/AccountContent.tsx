@@ -196,7 +196,7 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
               <div className="flex justify-between">
                 <div className="flex-1">
                   <div className="mb-2">
-                    <p className="font-medium text-gray-800 mb-1">Order: {order.id.slice(0, 8)}...</p>
+                    <p className="font-medium text-gray-800 mb-1">Order: {order.id.slice(0, 4)}</p>
                     <p className="text-gray-600 text-sm mb-1">
                       Status: <span className={order.status === 'paid' ? 'text-green-600' : 'text-orange-500'}>{order.status}</span>
                     </p>
@@ -206,6 +206,15 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
                       <p className="text-xs text-gray-400">Paid at: {new Date(order.paid_at).toLocaleDateString()}</p>
                     )}
                   </div>
+                </div>
+                <div className="text-right pr-50 text-sm text-gray-600">
+                  {order.items && order.items.length > 0 ? (
+                    order.items.map((item) => (
+                      <p key={item.id}>{item.quantity}x {item.product_title}</p>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 italic">No items</p>
+                  )}
                 </div>
               </div>
             </div>

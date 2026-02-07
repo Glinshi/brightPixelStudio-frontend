@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -8,7 +9,27 @@ import AccountContent from '../components/AccountContent'
 type AccountSection = 'profile' | 'workshops' | 'orders' | 'settings'
 
 export default function Account() {
+  const { user, authLoading } = useApp()
+  const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState<AccountSection>('profile')
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/signin')
+    }
+  }, [user, authLoading, navigate])
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -20,7 +41,7 @@ export default function Account() {
             activeSection={activeSection}
             setActiveSection={setActiveSection}
           />
-          <AccountContent activeSection={activeSection} />
+          <AccountContent activeSection={activeSection} setActiveSection={setActiveSection} />
         </div>
       </div>
       <Footer />

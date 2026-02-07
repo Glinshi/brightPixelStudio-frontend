@@ -4,6 +4,7 @@ import Button from './Button'
 
 type AccountContentProps = {
   activeSection: 'profile' | 'workshops' | 'orders' | 'settings'
+  setActiveSection: (section: 'profile' | 'workshops' | 'orders' | 'settings') => void
 }
 
 function formatDate(dateString: string | null): string {
@@ -18,7 +19,7 @@ function formatDate(dateString: string | null): string {
   })
 }
 
-export default function AccountContent({ activeSection }: AccountContentProps) {
+export default function AccountContent({ activeSection, setActiveSection }: AccountContentProps) {
   const { enrolledWorkshops, unenrollFromWorkshop, orders, workshopsLoading, user, setUser } = useApp()
   const [currentOrderPage, setCurrentOrderPage] = useState(1)
   const [showUpdatedMessage, setShowUpdatedMessage] = useState(false)
@@ -149,7 +150,27 @@ export default function AccountContent({ activeSection }: AccountContentProps) {
   const currentOrders = orders.slice(orderStartIndex, orderStartIndex + itemsPerPage)
 
   const renderProfile = () => (
-    <div className="flex items-start justify-center h-full pt-16">Empty</div>
+    <div className="flex items-start justify-center h-full pt-16">
+      <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 w-80">
+        {user ? (
+          <>
+            <p className="text-center text-gray-500 text-sm mb-4">
+                Firstname: {user.first_name} <br />
+                Lastname: {user.last_name}   <br />
+                Email: {user.email}
+            </p>
+            <Button 
+              onClick={() => setActiveSection('settings')}
+              className="w-full mt-4 rounded-lg px-4 py-3"
+            >
+              Update profile
+            </Button>
+          </>
+        ) : (
+          <p className="text-center text-gray-500">Loading...</p>
+        )}
+    </div>
+  </div>
   )
 
   const renderWorkshops = () => (

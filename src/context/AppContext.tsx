@@ -47,6 +47,7 @@ interface AppContextType {
   // User
   user: User | null
   setUser: (user: User | null) => void
+  authLoading: boolean
   login: (email: string, password: string, syncCart?: boolean) => Promise<void>
   logout: () => void
   
@@ -99,6 +100,7 @@ const clearLocalCart = () => {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [enrolledWorkshops, setEnrolledWorkshops] = useState<Workshop[]>([])
   const [workshopsLoading, setWorkshopsLoading] = useState(false)
   const [cartItems, setCartItems] = useState<CartItem[]>(() => getLocalCart())
@@ -243,6 +245,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
       } catch {
         // Not logged in, that's fine
+      } finally {
+        setAuthLoading(false)
       }
     }
     checkAuth()
@@ -470,6 +474,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider value={{
       user,
       setUser,
+      authLoading,
       login,
       logout,
       enrolledWorkshops,

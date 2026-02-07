@@ -23,6 +23,14 @@ export default function Pay() {
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
 
+
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [selectedBank, setSelectedBank] = useState("");
+  const [paypalEmail, setPaypalEmail] = useState("");
+
   const pendingOrder = orders.find(o => o.id === currentOrderId);
   const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace('$', '')) : 0;
 
@@ -44,8 +52,23 @@ export default function Pay() {
     }
   }, [fetchOrders]);
 
+  const isPaymentReady = () => {
+    if (!currentOrderId) return false;
+    
+    if (selectedPayment === "credit-card") {
+      return cardNumber.length >= 16 && cardExpiry.length >= 4 && cardCvv.length >= 3 && cardName.length >= 2;
+    }
+    if (selectedPayment === "ideal") {
+      return selectedBank !== "";
+    }
+    if (selectedPayment === "paypal") {
+      return paypalEmail.includes("@");
+    }
+    return false;
+  };
+
   const handlePayment = async () => {
-    if (currentOrderId) {
+    if (currentOrderId && isPaymentReady()) {
       setIsProcessing(true);
       setTimeout(async () => {
         await payOrder(currentOrderId);
@@ -112,12 +135,35 @@ export default function Pay() {
                     </label>
                   </div>
                   {selectedPayment === "credit-card" && (
-                    <div className="space-y-4 pt-4 border-t border-gray-200">
-                      <div>
+                    <div className="space-y-3 pt-4 border-t border-gray-200">
+                      <input
+                        type="text"
+                        placeholder="Cardholder Name"
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Card Number (1234 5678 9012 3456)"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                      />
+                      <div className="flex gap-3">
                         <input
                           type="text"
-                          placeholder="0426567780"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:[rgba(152,122,31,0.30)]"
+                          placeholder="MM/YY"
+                          value={cardExpiry}
+                          onChange={(e) => setCardExpiry(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                          className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                        />
+                        <input
+                          type="text"
+                          placeholder="CVV"
+                          value={cardCvv}
+                          onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                          className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
                         />
                       </div>
                     </div>
@@ -140,11 +186,17 @@ export default function Pay() {
                   </div>
                   {selectedPayment === "ideal" && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:[rgba(152,122,31,0.30)]">
-                        <option>Choose your bank</option>
-                        <option>ABN AMRO</option>
-                        <option>ING</option>
-                        <option>Rabobank</option>
+                      <select 
+                        value={selectedBank}
+                        onChange={(e) => setSelectedBank(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                      >
+                        <option value="">Choose your bank</option>
+                        <option value="abn">ABN AMRO</option>
+                        <option value="ing">ING</option>
+                        <option value="rabo">Rabobank</option>
+                        <option value="sns">SNS Bank</option>
+                        <option value="bunq">bunq</option>
                       </select>
                     </div>
                   )}
@@ -164,12 +216,23 @@ export default function Pay() {
                       PayPal
                     </label>
                   </div>
+                  {selectedPayment === "paypal" && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <input
+                        type="email"
+                        placeholder="PayPal Email"
+                        value={paypalEmail}
+                        onChange={(e) => setPaypalEmail(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="mt-6">
                 <Button
                   onClick={handlePayment}
-                  disabled={isProcessing || !currentOrderId}
+                  disabled={isProcessing || !isPaymentReady()}
                   className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.7)] disabled:opacity-50"
                 >
                   {isProcessing ? 'Processing...' : `Pay $${total.toFixed(2)} securely`}

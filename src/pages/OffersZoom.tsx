@@ -10,7 +10,7 @@ import Button from "../components/Button";
 
 export default function OffersZoom() {
   const { addToCart } = useApp();
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const [searchParams] = useSearchParams();
   const offerId = searchParams.get("offer") || "";
   const [offer, setOffer] = useState<Offer | null>(null);
@@ -41,14 +41,15 @@ export default function OffersZoom() {
   }, [offerId]);
 
   const updateQuantity = (newQuantity: number) => {
-    if (newQuantity < 1) return;
+    if (newQuantity < 0) return;
     setQuantity(newQuantity);
   };
 
   const addToCartHandler = async () => {
-    if (!offer) return;
+    if (!offer || quantity === 0) return;
     await addToCart(offer.id, offer.title, offer.price, quantity);
     alert(`Added ${quantity} ${offer.title} to cart!`);
+    setQuantity(0);
   };
 
   if (loading) {

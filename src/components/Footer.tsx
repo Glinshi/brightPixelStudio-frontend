@@ -45,10 +45,6 @@ export default function Footer() {
               <h4 className="font-medium text-gray-900">Account</h4>
               <ul className="mt-4 space-y-2">
                 <li><Link to="/account" className="text-sm text-gray-600 hover:text-gray-900">My account</Link></li>
-                <li><span className="text-sm text-gray-400 cursor-not-allowed">My workshops</span></li>
-                <li><span className="text-sm text-gray-400 cursor-not-allowed">My orders</span></li>
-                <li><span className="text-sm text-gray-400 cursor-not-allowed">Settings</span></li>
-                <li><span className="text-sm text-gray-400 cursor-not-allowed">Logout</span></li>
               </ul>
             </div>
 

@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Minus, Plus, Trash2 } from 'lucide-react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
 import NotLoggedInPopup from '../components/NotLoggedInPopup'
 import { useApp } from '../context/AppContext'
 
@@ -34,7 +32,6 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
        
       <div className="mx-auto max-w-4xl px-6 py-12">
         <div className="mb-8">
@@ -122,7 +119,6 @@ export default function Cart() {
         </div>
       </div>
 
-      <Footer />
 
       <NotLoggedInPopup 
         isOpen={showLoginModal} 

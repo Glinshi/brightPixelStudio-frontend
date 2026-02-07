@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
 import Button from '../components/Button'
 import ZoomCard from '../components/ZoomCard'
 import { useApp } from '../context/AppContext'
@@ -92,13 +90,11 @@ export default function WorkshopsZoom() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="flex items-center justify-center h-64">
             <p className="text-gray-600">Loading workshop...</p>
           </div>
         </div>
-        <Footer />
       </div>
     )
   }
@@ -106,7 +102,6 @@ export default function WorkshopsZoom() {
   if (error || !workshop) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="mb-6">
             <Link to="/workshops" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -118,14 +113,12 @@ export default function WorkshopsZoom() {
           </div>
           <div className="text-center text-red-500 py-8">{error || 'Workshop not found'}</div>
         </div>
-        <Footer />
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="mb-6">
@@ -165,7 +158,6 @@ export default function WorkshopsZoom() {
         />
       </div>
 
-      <Footer />
     </div>
   )
 }

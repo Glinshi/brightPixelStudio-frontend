@@ -1,12 +1,9 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import Button from "../components/Button";
 import DarkVeil from "../components/Darkveil";
 
 export default function Landing() {
   return (
     <div className="min-h-screen overflow-x-hidden flex flex-col">
-      <Navbar />
       <div className="relative flex-1 flex items-center justify-center px-6 min-h-[80vh]">
         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
           <DarkVeil
@@ -59,7 +56,6 @@ export default function Landing() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import NavigationArrows from "../components/NavigationArrows";
 import WorkshopCard from "../components/WorkshopCard";
 
@@ -46,13 +44,11 @@ export default function Workshops() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <div className="mx-auto max-w-4xl px-6 py-12">
           <div className="flex items-center justify-center h-64">
             <p className="text-gray-600">Loading workshops...</p>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -60,18 +56,15 @@ export default function Workshops() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <div className="mx-auto max-w-4xl px-6 py-12">
           <div className="text-center text-red-500 py-8">{error}</div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
 
       <div className="mx-auto max-w-4xl px-6 py-12">
         <div className="mb-12">
@@ -107,7 +100,6 @@ export default function Workshops() {
         )}
       </div>
 
-      <Footer />
     </div>
   );
 }

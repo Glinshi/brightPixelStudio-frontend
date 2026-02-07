@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Minus, Plus, ChevronLeft } from "lucide-react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import ZoomCard from "../components/ZoomCard";
 import { useApp } from "../context/AppContext";
 import type { Offer } from "./Offers";
@@ -55,13 +53,11 @@ export default function OffersZoom() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="flex items-center justify-center h-64">
             <p className="text-gray-600">Loading offer...</p>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -69,7 +65,6 @@ export default function OffersZoom() {
   if (error || !offer) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="mb-6">
             <Link
@@ -86,14 +81,12 @@ export default function OffersZoom() {
             <p className="text-red-600">Error: {error || "Offer not found"}</p>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
 
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="mb-6">
@@ -146,7 +139,6 @@ export default function OffersZoom() {
         />
       </div>
 
-      <Footer />
     </div>
   );
 }

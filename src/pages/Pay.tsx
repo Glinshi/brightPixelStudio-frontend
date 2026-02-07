@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreditCard } from "lucide-react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import Button from "../components/Button";
 import { useApp } from "../context/AppContext";
 
@@ -83,7 +81,6 @@ export default function Pay() {
   if (paymentSuccess) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <div className="mx-auto max-w-2xl px-6 py-12 text-center">
           <div className="bg-white rounded-xl border border-gray-300 p-8">
             <h1 className="text-3xl font-semibold text-gray-900 mb-4">
@@ -97,14 +94,12 @@ export default function Pay() {
             </Button>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-semibold text-gray-900 mb-4">
@@ -271,7 +266,6 @@ export default function Pay() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

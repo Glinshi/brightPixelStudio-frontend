@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import Button from "../components/Button";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import shoppingPng from "../assets/images/shopping.png";
@@ -104,7 +102,6 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       <div className="flex min-h-[40vh] items-center justify-center px-6">
         <div className="max-w-4xl py-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -191,7 +188,6 @@ export default function Signup() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

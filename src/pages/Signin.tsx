@@ -1,5 +1,3 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import Button from "../components/Button";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import shoppingPng from "../assets/images/shopping.png";
@@ -81,7 +79,6 @@ export default function Signin() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
 
       <div className="flex min-h-[80vh] items-center justify-center px-6">
         <div className="w-full max-w-4xl">
@@ -165,7 +162,6 @@ export default function Signin() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

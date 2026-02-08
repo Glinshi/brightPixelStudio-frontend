@@ -3,6 +3,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { ChevronLeft } from 'lucide-react'
 import Button from '../components/Button'
 import ZoomCard from '../components/ZoomCard'
+import NotLoggedInPopup from '../components/NotLoggedInPopup'
 import { useApp } from '../context/AppContext'
 import type { Workshop } from './Workshops'
 
@@ -28,6 +29,7 @@ export default function WorkshopsZoom() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [enrolling, setEnrolling] = useState(false)
+  const [showLoginPopup, setShowLoginPopup] = useState(false)
 
   useEffect(() => {
     const fetchWorkshop = async () => {
@@ -68,8 +70,7 @@ export default function WorkshopsZoom() {
 
   const handleEnrollment = async () => {
     if (!user) {
-      alert('Please log in to enroll in workshops')
-      navigate('/signin')
+      setShowLoginPopup(true)
       return
     }
     if (!workshop) return
@@ -119,7 +120,11 @@ export default function WorkshopsZoom() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
+      <NotLoggedInPopup 
+        isOpen={showLoginPopup} 
+        onClose={() => setShowLoginPopup(false)}
+        redirectTo={`/workshops-zoom?workshop=${workshopId}`}
+      />
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="mb-6">
           <Link to="/workshops" className="flex items-center gap-3 hover:opacity-80 transition-opacity">

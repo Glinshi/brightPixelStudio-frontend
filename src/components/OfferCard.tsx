@@ -9,6 +9,7 @@ interface OfferCardProps {
     description: string
     features?: string[]
     product_type?: 'product' | 'service'
+    image_url?: string | null
   }
 }
 
@@ -18,13 +19,13 @@ export default function OfferCard({ offer }: OfferCardProps) {
   return (
     <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-80 w-80">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex items-start gap-3 mb-3">
-          <Icon size={20} className="text-[rgba(152,122,31,0.7)] flex-shrink-0 mt-1" />
+        <div className="mb-3">
+          <Icon size={45} className="text-[rgba(152,122,31,0.7)] mt-1 mb-2" />
           <Link 
             to={`/offers-zoom?offer=${offer.id}`}
             className="block hover:opacity-80 transition-opacity"
           >
-            <h3 className="text-xl font-semibold text-gray-900 line-clamp-2" title={offer.title}>{offer.title}</h3>
+            <h3 className="text-xl font-semibold text-gray-900 line-clamp-2 text-left" title={offer.title}>{offer.title}</h3>
           </Link>
         </div>
         <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3" title={offer.description}>{offer.description}</p>

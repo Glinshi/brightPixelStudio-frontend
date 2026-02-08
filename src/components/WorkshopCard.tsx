@@ -25,18 +25,18 @@ function formatDate(dateString: string | null): string {
 
 export default function WorkshopCard({ workshop }: WorkshopCardProps) {
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-300 shadow-sm">
-      <div className="flex items-start gap-4">
+    <div className="bg-white rounded-xl p-6 border border-gray-300 shadow-sm min-h-64">
+      <div className="flex items-start gap-4 h-full">
         <div className="flex-shrink-0 mb-4">
           <Presentation size={24} className="text-[rgba(152,122,31,0.7)]" />
         </div>
         
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col">
           <Link to={`/workshops-zoom?workshop=${workshop.id}`} className="block hover:opacity-80 transition-opacity">
             <h3 className="text-xl font-semibold text-gray-900 mb-3">{workshop.title}</h3>
           </Link>
           <p className="text-gray-500 text-sm mb-3">{formatDate(workshop.starts_at)}</p>
-          <p className="text-gray-700 mb-3 leading-relaxed">{workshop.description}</p>
+          <p className="text-gray-700 mb-3 leading-relaxed line-clamp-2 flex-1">{workshop.description}</p>
         </div>
       </div>
     </div>

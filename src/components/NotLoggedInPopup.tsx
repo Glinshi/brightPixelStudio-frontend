@@ -6,9 +6,19 @@ interface NotLoggedInPopupProps {
   isOpen: boolean;
   onClose: () => void;
   redirectTo?: string;
+  title?: string;
+  message?: string;
 }
 
-export default function NotLoggedInPopup({ isOpen, onClose, redirectTo = "checkout" }: NotLoggedInPopupProps) {
+export default function NotLoggedInPopup({ isOpen, onClose, redirectTo = "checkout", title, message }: NotLoggedInPopupProps) {
+  const isCheckout = redirectTo === "checkout";
+  const defaultTitle = isCheckout ? "Sign in to checkout" : "Sign in to enroll";
+  const defaultMessage = isCheckout 
+    ? "You need to be logged in to place your order. Your cart will be saved!" 
+    : "You need to be logged in to enroll in this workshop.";
+
+  const finalTitle = title || defaultTitle;
+  const finalMessage = message || defaultMessage;
   if (!isOpen) return null;
 
   return (
@@ -28,10 +38,10 @@ export default function NotLoggedInPopup({ isOpen, onClose, redirectTo = "checko
 
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-            Sign in to checkout
+            {finalTitle}
           </h2>
           <p className="text-gray-600 mb-6">
-            You need to be logged in to place your order. Your cart will be saved!
+            {finalMessage}
           </p>
 
           <div className="space-y-3">

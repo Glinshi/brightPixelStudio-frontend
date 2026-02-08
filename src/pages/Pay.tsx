@@ -28,6 +28,7 @@ export default function Pay() {
   const [cardName, setCardName] = useState("");
   const [selectedBank, setSelectedBank] = useState("");
   const [paypalEmail, setPaypalEmail] = useState("");
+  const [paymentError, setPaymentError] = useState("");
 
   const pendingOrder = orders.find(o => o.id === currentOrderId);
   const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace('$', '')) : 0;
@@ -66,16 +67,50 @@ export default function Pay() {
   };
 
   const handlePayment = async () => {
-    if (currentOrderId && isPaymentReady()) {
-      setIsProcessing(true);
-      setTimeout(async () => {
-        await payOrder(currentOrderId);
-        setPaymentSuccess(true);
-        localStorage.removeItem('pendingOrderId');
-        localStorage.removeItem('pendingOrderItems');
-        setIsProcessing(false);
-      }, 1000);
+    setPaymentError("");
+    
+    if (!currentOrderId) {
+      setPaymentError("No order found. Please try again.");
+      return;
     }
+
+    if (selectedPayment === "credit-card") {
+      if (!cardName || cardName.length < 2) {
+        setPaymentError("Please enter a valid cardholder name.");
+        return;
+      }
+      if (cardNumber.length < 16) {
+        setPaymentError("Please enter a valid 16-digit card number.");
+        return;
+      }
+      if (cardExpiry.length < 4) {
+        setPaymentError("Please enter a valid expiry date (MM/YY).");
+        return;
+      }
+      if (cardCvv.length < 3) {
+        setPaymentError("Please enter a valid CVV (3 digits).");
+        return;
+      }
+    } else if (selectedPayment === "ideal") {
+      if (!selectedBank) {
+        setPaymentError("Please select your bank.");
+        return;
+      }
+    } else if (selectedPayment === "paypal") {
+      if (!paypalEmail.includes("@")) {
+        setPaymentError("Please enter a valid PayPal email address.");
+        return;
+      }
+    }
+
+    setIsProcessing(true);
+    setTimeout(async () => {
+      await payOrder(currentOrderId);
+      setPaymentSuccess(true);
+      localStorage.removeItem('pendingOrderId');
+      localStorage.removeItem('pendingOrderItems');
+      setIsProcessing(false);
+    }, 1000);
   };
 
   if (paymentSuccess) {
@@ -105,6 +140,9 @@ export default function Pay() {
           <h1 className="text-3xl font-semibold text-gray-900 mb-4">
             You're one step away from completing your order
           </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Choose your preferred payment method below and enter your details. We support Credit Card, iDEAL, and PayPal for your convenience.
+          </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-6">
@@ -131,35 +169,50 @@ export default function Pay() {
                   </div>
                   {selectedPayment === "credit-card" && (
                     <div className="space-y-3 pt-4 border-t border-gray-200">
-                      <input
-                        type="text"
-                        placeholder="Cardholder Name"
-                        value={cardName}
-                        onChange={(e) => setCardName(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Card Number (1234 5678 9012 3456)"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
-                      />
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
+                        <input
+                          type="text"
+                          placeholder="John Doe"
+                          value={cardName}
+                          onChange={(e) => setCardName(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                        <input
+                          type="text"
+                          placeholder="4532 1234 5678 9010"
+                          value={cardNumber}
+                          onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">16-digit card number</p>
+                      </div>
                       <div className="flex gap-3">
-                        <input
-                          type="text"
-                          placeholder="MM/YY"
-                          value={cardExpiry}
-                          onChange={(e) => setCardExpiry(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                          className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
-                        />
-                        <input
-                          type="text"
-                          placeholder="CVV"
-                          value={cardCvv}
-                          onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                          className="w-1/2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
-                        />
+                        <div className="flex-1">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                          <input
+                            type="text"
+                            placeholder="MM/YY"
+                            value={cardExpiry}
+                            onChange={(e) => setCardExpiry(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">MM/YY</p>
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                          <input
+                            type="text"
+                            placeholder="123"
+                            value={cardCvv}
+                            onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">3-digit code</p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -176,11 +229,12 @@ export default function Pay() {
                       className="w-4 h-4"
                     />
                     <label htmlFor="ideal" className="font-medium">
-                      iDEAL
+                      iDEAL (Netherlands)
                     </label>
                   </div>
                   {selectedPayment === "ideal" && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
+                      <p className="text-sm text-gray-600 mb-3">Select your bank to proceed with iDEAL payment:</p>
                       <select 
                         value={selectedBank}
                         onChange={(e) => setSelectedBank(e.target.value)}
@@ -213,21 +267,28 @@ export default function Pay() {
                   </div>
                   {selectedPayment === "paypal" && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">PayPal Email Address</label>
                       <input
                         type="email"
-                        placeholder="PayPal Email"
+                        placeholder="your@email.com"
                         value={paypalEmail}
                         onChange={(e) => setPaypalEmail(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[rgba(152,122,31,0.5)]"
                       />
+                      <p className="text-xs text-gray-500 mt-1">You will be redirected to PayPal to complete the payment</p>
                     </div>
                   )}
                 </div>
               </div>
               <div className="mt-6">
+                {paymentError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-800">{paymentError}</p>
+                  </div>
+                )}
                 <Button
                   onClick={handlePayment}
-                  disabled={isProcessing || !isPaymentReady()}
+                  disabled={isProcessing}
                   className="w-full rounded-[25px] px-6 py-3 text-white font-medium transition-colors hover:opacity-90 bg-[rgba(152,122,31,0.49)] hover:bg-[rgba(152,122,31,0.7)] disabled:opacity-50"
                 >
                   {isProcessing ? 'Processing...' : `Pay $${total.toFixed(2)} securely`}

@@ -22,6 +22,7 @@ export default function Signup() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +83,10 @@ export default function Signup() {
         throw new Error(data.detail || "Signup failed");
       }
 
-      navigate(redirectTo ? `/signin?redirect=${redirectTo}` : "/signin");
+      setSuccess(true);
+      setTimeout(() => {
+        navigate(redirectTo ? `/signin?redirect=${redirectTo}` : "/signin");
+      }, 2000);
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
       
@@ -102,6 +106,13 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-white">
+      {success && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-green-500 text-white px-8 py-4 rounded-lg shadow-lg text-lg font-semibold">
+            Registration successful, you can now log in.
+          </div>
+        </div>
+      )}
       <div className="flex min-h-[40vh] items-center justify-center px-6">
         <div className="max-w-4xl py-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">

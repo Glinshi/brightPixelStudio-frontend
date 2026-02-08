@@ -40,7 +40,7 @@ export default function OfferCard({ offer }: OfferCardProps) {
         )}
       </div>
       <div className="mt-auto flex items-end pt-2">
-        <span className="text-2xl font-bold text-[rgba(152,122,31,0.55)]">${offer.price}</span>
+        <span className="text-2xl font-bold text-[rgba(152,122,31,0.55)]">${offer.price.toFixed(2)}</span>
       </div>
     </div>
   )

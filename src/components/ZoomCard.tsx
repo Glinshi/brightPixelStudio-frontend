@@ -59,7 +59,7 @@ export default function ZoomCard({
           )}
           
           {price && (
-            <div className="text-3xl font-bold text-[rgba(152,122,31,0.55)]">${price}</div>
+            <div className="text-3xl font-bold text-[rgba(152,122,31,0.55)]">${price.toFixed(2)}</div>
           )}
           
           <div className="pt-4">

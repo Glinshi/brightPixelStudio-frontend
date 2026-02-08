@@ -75,8 +75,8 @@ export default function Offers() {
             Our Offers
           </h1>
           <p className="text-gray-600 max-w-2xl">
-            We offer comprehensive suite of services and products to help you
-            build, launch and grow digital products that make a difference.
+            We offer a comprehensive suite of services and products to help you build, launch,
+            and grow digital products that make a difference.
           </p>
         </div>
         <div className="relative">

@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext'
 import AccountSidebar from '../components/AccountSidebar'
 import AccountContent from '../components/AccountContent'
 
-type AccountSection = 'profile' | 'workshops' | 'orders' | 'settings'
+type AccountSection = 'profile' | 'workshops' | 'orders' | 'offers' | 'settings'
 
 export default function Account() {
   const { user, authLoading } = useApp()

@@ -84,10 +84,12 @@ export default function Workshops() {
           </div>
         ) : (
           <div className="relative">
-            <div className="space-y-4 mb-8">
-              {currentWorkshops.map((workshop) => (
-                <WorkshopCard key={workshop.id} workshop={workshop} />
-              ))}
+            <div className="px-10 lg:px-14">
+              <div className="space-y-4 mb-8">
+                {currentWorkshops.map((workshop) => (
+                  <WorkshopCard key={workshop.id} workshop={workshop} />
+                ))}
+              </div>
             </div>
             {totalPages > 1 && (
               <NavigationArrows

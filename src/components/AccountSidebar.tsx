@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
-type AccountSection = 'profile' | 'workshops' | 'orders' | 'settings';
+type AccountSection = 'profile' | 'workshops' | 'orders' | 'offers' | 'settings';
 
 interface AccountSidebarProps {
   activeSection: AccountSection;
@@ -11,7 +11,7 @@ interface AccountSidebarProps {
 }
 
 export default function AccountSidebar({ activeSection, setActiveSection }: AccountSidebarProps) {
-  const { logout } = useApp();
+  const { logout, user } = useApp();
   const navigate = useNavigate();
 
   async function onLogout() {
@@ -34,12 +34,22 @@ export default function AccountSidebar({ activeSection, setActiveSection }: Acco
         >
           My workshops
         </button>
-        <button
-          onClick={() => setActiveSection('orders')}
-          className={`w-full text-left px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm transition-colors ${activeSection === 'orders' ? 'text-gray-800 font-medium bg-[rgba(152,122,31,0.49)]' : 'text-gray-700  bg-[rgba(152,122,31,0.55)]'}`}
-        >
-          My orders
-        </button>
+        {!user?.is_superuser && (
+          <button
+            onClick={() => setActiveSection('orders')}
+            className={`w-full text-left px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm transition-colors ${activeSection === 'orders' ? 'text-gray-800 font-medium bg-[rgba(152,122,31,0.49)]' : 'text-gray-700  bg-[rgba(152,122,31,0.55)]'}`}
+          >
+            My orders
+          </button>
+        )}
+        {user?.is_superuser && (
+          <button
+            onClick={() => setActiveSection('offers')}
+            className={`w-full text-left px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm transition-colors italic ${activeSection === 'offers' ? 'text-gray-800 font-medium bg-[rgba(152,122,31,0.49)]' : 'text-gray-700 bg-[rgba(152,122,31,0.55)]'}`}
+          >
+            My offers
+          </button>
+        )}
         <button
           onClick={() => setActiveSection('settings')}
           className={`w-full text-left px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm transition-colors italic ${activeSection === 'settings' ? 'text-gray-800 font-medium bg-[rgba(152,122,31,0.49)]' : 'text-gray-700 bg-[rgba(152,122,31,0.55)]'}`}

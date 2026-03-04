@@ -7,7 +7,7 @@ import type { Offer } from "./Offers";
 import Button from "../components/Button";
 
 export default function OffersZoom() {
-  const { addToCart } = useApp();
+  const { addToCart, user } = useApp();
   const [quantity, setQuantity] = useState(0);
   const [searchParams] = useSearchParams();
   const offerId = searchParams.get("offer") || "";
@@ -109,6 +109,7 @@ export default function OffersZoom() {
           imageSrc={offer.image_url}
           imageAlt={offer.title}
           actionSection={
+            user?.is_superuser ? undefined : (
             <div className="flex items-center gap-6">
               <div className="flex items-center">
                 <button
@@ -135,6 +136,7 @@ export default function OffersZoom() {
                 ADD TO CART
               </Button>
             </div>
+            )
           }
         />
       </div>

@@ -80,10 +80,12 @@ export default function Offers() {
           </p>
         </div>
         <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-2 mb-16 w-fit mx-auto">
-            {currentOffers.map((offer) => (
-              <OfferCard key={offer.id} offer={offer} />
-            ))}
+          <div className="px-10 sm:px-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-2 mb-16 w-fit mx-auto">
+              {currentOffers.map((offer) => (
+                <OfferCard key={offer.id} offer={offer} />
+              ))} 
+            </div>
           </div>
 
           <NavigationArrows

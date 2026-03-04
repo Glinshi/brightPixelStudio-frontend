@@ -142,6 +142,7 @@ export default function WorkshopsZoom() {
           imageAlt={workshop.title}
           date={formatDate(workshop.starts_at)}
           actionSection={
+            user?.is_superuser ? undefined : (
             <div className="flex items-center gap-4">
               <Button
                 onClick={handleEnrollment}
@@ -159,6 +160,7 @@ export default function WorkshopsZoom() {
                 </span>
               )}
             </div>
+            )
           }
         />
       </div>

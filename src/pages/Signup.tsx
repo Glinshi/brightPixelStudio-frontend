@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../components/Button";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import shoppingPng from "../assets/images/shopping.png";
+import shoppingPng from "../assets/images/shopping2.png";
 
 const capitalizeFirstLetter = (str: string) => {
   const trimmed = str.trim();
@@ -137,7 +137,7 @@ export default function Signup() {
                     onChange={(e) =>
                       setFormData({ ...formData, first_name: e.target.value })
                     }
-                    className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full rounded-[25px] border border-gray-300  px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                     placeholder="Firstname"
                   />
                 </div>
@@ -149,7 +149,7 @@ export default function Signup() {
                     onChange={(e) =>
                       setFormData({ ...formData, last_name: e.target.value })
                     }
-                    className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                     placeholder="Lastname"
                   />
                 </div>
@@ -161,7 +161,7 @@ export default function Signup() {
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
-                    className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                     placeholder="Email"
                   />
                 </div>
@@ -173,7 +173,7 @@ export default function Signup() {
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
                     }
-                    className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                     placeholder="Password"
                   />
                 </div>
@@ -191,7 +191,7 @@ export default function Signup() {
 
               <p className="mt-6 text-center text-sm text-gray-500">
                 Already have an account?{" "}
-                <Link to={redirectTo ? `/signin?redirect=${redirectTo}` : "/signin"} className="text-blue-500 font-medium">
+                <Link to={redirectTo ? `/signin?redirect=${redirectTo}` : "/signin"} className="text-black font-medium">
                   Sign In
                 </Link>
               </p>

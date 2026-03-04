@@ -123,7 +123,7 @@ export default function Signin() {
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
-                        className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                         placeholder="Email"
                       />
                     </div>
@@ -135,7 +135,7 @@ export default function Signin() {
                         onChange={(e) =>
                           setFormData({ ...formData, password: e.target.value })
                         }
-                        className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full rounded-[25px] border border-gray-300 px-4 py-3 text-gray-700 placeholder-gray-400 focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
                         placeholder="Password"
                       />
                     </div>
@@ -152,7 +152,7 @@ export default function Signin() {
                   </form>
                   <p className="mt-6 text-center text-sm text-gray-500">
                     Don't have an account?{" "}
-                    <Link to={redirectTo ? `/signup?redirect=${redirectTo}` : "/signup"} className="text-blue-500 font-medium">
+                    <Link to={redirectTo ? `/signup?redirect=${redirectTo}` : "/signup"} className="text-black font-medium">
                       Sign Up
                     </Link>
                   </p>

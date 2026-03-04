@@ -17,7 +17,7 @@ export default function OfferCard({ offer }: OfferCardProps) {
   const Icon = offer.product_type === 'service' ? Wrench : Package
   
   return (
-    <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-80 w-80">
+    <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-80 w-full sm:w-80">
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="mb-3">
           <Icon size={45} className="text-[rgba(152,122,31,0.7)] mt-1 mb-2" />

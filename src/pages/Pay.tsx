@@ -31,7 +31,7 @@ export default function Pay() {
   const [paymentError, setPaymentError] = useState("");
 
   const pendingOrder = orders.find(o => o.id === currentOrderId);
-  const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace('$', '')) : 0;
+  const total = pendingOrder ? parseFloat(pendingOrder.total_amount.replace(/[^0-9.]/g, '')) : 0;
 
   React.useEffect(() => {
     const pendingOrderId = localStorage.getItem('pendingOrderId');

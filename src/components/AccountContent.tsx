@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import Button from './Button'
 import ConfirmPopup from './ConfirmPopup'
@@ -23,6 +23,7 @@ function formatDate(dateString: string | null): string {
 
 export default function AccountContent({ activeSection, setActiveSection }: AccountContentProps) {
   const { enrolledWorkshops, unenrollFromWorkshop, orders, workshopsLoading, user, setUser } = useApp()
+  const navigate = useNavigate()
   const [currentOrderPage, setCurrentOrderPage] = useState(1)
   const [showUpdatedMessage, setShowUpdatedMessage] = useState(false)
   const [updateError, setUpdateError] = useState<string | null>(null)
@@ -588,7 +589,27 @@ export default function AccountContent({ activeSection, setActiveSection }: Acco
               <div className="flex">
                 <div className="w-1/2">
                   <div className="mb-2">
-                    <p className="font-medium text-gray-800 mb-1">Order: {order.id.slice(0, 4)}</p>
+                    {order.status === 'pending' ? (
+                      <p
+                        className="font-medium text-blue-600 mb-1 cursor-pointer hover:underline"
+                        onClick={() => {
+                          localStorage.setItem('pendingOrderId', order.id)
+                          const items = order.items?.map((item: any) => ({
+                            id: item.id,
+                            product_id: item.product_id,
+                            title: item.product_title,
+                            price: item.unit_price,
+                            quantity: item.quantity,
+                          })) || []
+                          localStorage.setItem('pendingOrderItems', JSON.stringify(items))
+                          navigate('/pay')
+                        }}
+                      >
+                        Order: {order.id.slice(0, 4)}
+                      </p>
+                    ) : (
+                      <p className="font-medium text-gray-800 mb-1">Order: {order.id.slice(0, 4)}</p>
+                    )}
                     <p className="text-gray-600 text-sm mb-1">
                       Status: <span className={order.status === 'paid' ? 'text-green-600' : 'text-orange-500'}>{order.status}</span>
                     </p>

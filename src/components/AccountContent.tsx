@@ -585,8 +585,8 @@ export default function AccountContent({ activeSection, setActiveSection }: Acco
         <div className="space-y-4 mb-6">
           {currentOrders.map((order, index) => (
             <div key={`${order.id}-${index}`} className="bg-white rounded-lg border border-gray-400 p-4">
-              <div className="flex justify-between">
-                <div className="flex-1">
+              <div className="flex">
+                <div className="w-1/2">
                   <div className="mb-2">
                     <p className="font-medium text-gray-800 mb-1">Order: {order.id.slice(0, 4)}</p>
                     <p className="text-gray-600 text-sm mb-1">
@@ -599,10 +599,10 @@ export default function AccountContent({ activeSection, setActiveSection }: Acco
                     )}
                   </div>
                 </div>
-                <div className="text-right pr-50 text-sm text-gray-600">
+                <div className="w-1/2 text-sm text-gray-600 flex flex-col items-start">
                   {order.items && order.items.length > 0 ? (
                     order.items.map((item) => (
-                      <p key={item.id}>{item.quantity}x {item.product_title}</p>
+                      <p key={item.id} className="whitespace-nowrap">{item.quantity}x {item.product_title}</p>
                     ))
                   ) : (
                     <p className="text-gray-400 italic">No items</p>

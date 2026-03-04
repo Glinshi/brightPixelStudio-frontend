@@ -19,7 +19,7 @@ export default function CartPopup() {
             <Preview
               key={item.id}
               item={{
-                id: item.id,
+                id: Number(item.id),
                 name: item.title,
                 quantity: item.quantity,
                 price: item.price,

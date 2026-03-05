@@ -738,7 +738,7 @@ export default function AccountContent({ activeSection, setActiveSection }: Acco
           offersOnFirstPage + (currentOfferPage - 2) * itemsPerPage,
           offersOnFirstPage + (currentOfferPage - 1) * itemsPerPage
         )
-
+ 
     return (
       <div className="p-6">
         <ConfirmPopup
